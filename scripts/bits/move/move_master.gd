@@ -33,9 +33,6 @@ func change_to(bit:MoveBit):
 		current_bit.pass_call("_on_active")
 
 func _ready() -> void:
-	
-	print(move_bits)
-	
 	if initial_bit != null:  change_to(initial_bit)
 	elif len(move_bits) > 0: change_to(move_bits[0])
 	
@@ -47,11 +44,15 @@ func _ready() -> void:
 		
 
 func _process(delta: float) -> void:
+	if mover != null: for bit in move_bits: # Call every movebit's active/inactive function.
+		if bit == current_bit: bit.pass_call("_active", delta)
+		else:                  bit.pass_call("_inactive", delta)
+
+func _physics_process(delta: float) -> void:
 	if mover != null:
-		#print(current_bit)
 		for bit in move_bits: # Call every movebit's active/inactive function.
-			if bit == current_bit: bit.pass_call("_active", delta)
-			else:                  bit.pass_call("_inactive", delta)
+			if bit == current_bit: bit.pass_call("_phys_active", delta)
+			else:                  bit.pass_call("_phys_inactive", delta)
 		
 		## Pass any outstanding velocity to the mover, and position to the bot.
 		mover.move_and_slide()

@@ -1,0 +1,13 @@
+[gd_resource type="CanvasTexture" load_steps=3 format=3 uid="uid://dbcpt3shyumio"]
+
+[sub_resource type="Gradient" id="Gradient_67cwj"]
+colors = PackedColorArray(0, 0, 0.74509805, 1, 0.43137255, 1, 1, 1)
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_5mwl8"]
+gradient = SubResource("Gradient_67cwj")
+width = 128
+height = 128
+fill_to = Vector2(1, 1)
+
+[resource]
+diffuse_texture = SubResource("GradientTexture2D_5mwl8")
