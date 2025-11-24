@@ -1,1 +1,1 @@
-@abstract class_name a extends MoveBit
+@abstract class_name  extends MoveBit
