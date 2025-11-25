@@ -24,6 +24,10 @@ func get_area_bits() -> Array[AreaBit]:
 	for child in get_children(): if child is AreaBit:
 		response.append(child)
 	
+	# Append any siblings  that are AreaBits.
+	for child in get_parent().get_children(): if child is AreaBit:
+		response.append(child)
+	
 	return response
 
 ## Returns if a collision mask hits a collision layer.
@@ -32,6 +36,7 @@ func layer_match(layer:int, mask:int) -> bool:
 	# If they don't share any bits, it'll return false.
 	return layer & mask > 0 
 
+## Return their given arrays masked to the given int.
 func masked_areas(areas:Array[Area2D], mask:int) -> Array[Area2D]:
 	var response:Array[Area2D]
 	
@@ -40,7 +45,6 @@ func masked_areas(areas:Array[Area2D], mask:int) -> Array[Area2D]:
 		response.append(a)
 	
 	return response
-
 func masked_bodies(bodies:Array[Node2D], mask:int) -> Array[Node2D]:
 	var response:Array[Node2D]
 	
@@ -52,19 +56,52 @@ func masked_bodies(bodies:Array[Node2D], mask:int) -> Array[Node2D]:
 	
 	return response
 
+func _ready() -> void:
+	if area != null: # Connect all the signals.
+		area.area_entered.connect(_on_area_entered)
+		area.body_entered.connect(_on_body_entered)
+		
+		area.area_exited.connect(_on_area_exited)
+		area.body_exited.connect(_on_body_exited)
+
 func _process(delta: float) -> void:
 	
 	var areas := area.get_overlapping_areas()
 	var bodies := area.get_overlapping_bodies()
 	
+	# Run the overlap functions for all the AreaBits.
 	for bit in bits:
+		# The overlapping areas and bodies for this bit.
+		# NOTE: this is inefficient, it could only update these when 
+		# the overlaps change.
+		var o_areas  = masked_areas (areas,  bit.collision_mask)
+		var o_bodies = masked_bodies(bodies, bit.collision_mask)
 		
-		var o_areas = masked_areas(areas, bit.coll)
-		var o_bodies
+		if len(o_areas)  > 0: bit._while_overlapping_areas (o_areas,  delta)
+		if len(o_bodies) > 0: bit._while_overlapping_bodies(o_bodies, delta)
 
+func _on_area_entered(area_in:Area2D):
+	# Run the function for any with the matching layer.
+	for bit in bits: if layer_match(area_in.collision_layer, bit.collision_mask):
+		bit._on_area_entered(area_in)
+func _on_body_entered(body_in:Node2D):
+	for bit in bits:
+		if body_in is PhysicsBody2D:
+			if layer_match(body_in.collision_layer, bit.collision_mask):
+				bit._on_body_entered(body_in)
+		elif body_in is TileMapLayer:
+			if layer_match(body_in.tile_set.get_physics_layer_collision_layer(0), bit.collision_mask):
+				bit._on_body_entered(body_in)
 
-# What does this need to do?
-# - Run AreaBit functions when applicable.
-# - Know when 
-#
-#
+func _on_area_exited(area_out:Area2D):
+	# Run the function for any with the matching layer.
+	for bit in bits: if layer_match(area_out.collision_layer, bit.collision_mask):
+		bit._on_area_exited(area_out)
+func _on_body_exited(body_out:Node2D):
+	for bit in bits:
+		if body_out is PhysicsBody2D:
+			if layer_match(body_out.collision_layer, bit.collision_mask):
+				bit._on_body_exited(body_out)
+		elif body_out is TileMapLayer:
+			if layer_match(body_out.tile_set.get_physics_layer_collision_layer(0), bit.collision_mask):
+				bit._on_body_exited(body_out)
