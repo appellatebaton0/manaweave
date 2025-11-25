@@ -1,4 +1,4 @@
-[gd_scene load_steps=13 format=3 uid="uid://2vn41m46knrf"]
+[gd_scene load_steps=10 format=3 uid="uid://2vn41m46knrf"]
 
 [ext_resource type="Script" uid="uid://cybs26nrjtuw4" path="res://scripts/bits/bot.gd" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://buqr7nq4r1by7" path="res://scripts/bits/move/move_master.gd" id="2_0wfyh"]
@@ -6,7 +6,6 @@
 [ext_resource type="Script" uid="uid://73fhp1jpumqv" path="res://scripts/bits/move/follow_snap.gd" id="4_tefeu"]
 [ext_resource type="Script" uid="uid://b8645sh22sjky" path="res://scripts/values/node/manual.gd" id="5_tefeu"]
 [ext_resource type="PackedScene" uid="uid://du2iw1aap3iee" path="res://scenes/rooms/testroom.tscn" id="6_tefeu"]
-[ext_resource type="Script" uid="uid://cr2u2svftowtg" path="res://scripts/bits/area/area_master.gd" id="7_o6xl0"]
 
 [sub_resource type="Gradient" id="Gradient_0wfyh"]
 
@@ -17,15 +16,6 @@ height = 256
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyhfs"]
 size = Vector2(256, 256)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_o6xl0"]
-size = Vector2(300, 300)
-
-[sub_resource type="GDScript" id="GDScript_o6xl0"]
-script/source = "extends AreaBit
-
-func _on_body_entered(_body:Node2D): print(\"body! \")
-"
 
 [node name="Node" type="Node"]
 
@@ -61,16 +51,4 @@ input = NodePath("../../../../Player")
 metadata/_custom_type_script = "uid://b8645sh22sjky"
 
 [node name="TestRoom" parent="." instance=ExtResource("6_tefeu")]
-
-[node name="Area2D" type="Area2D" parent="."]
-position = Vector2(2176, -1154)
-
-[node name="AreaMasterBit" type="Node" parent="Area2D"]
-script = ExtResource("7_o6xl0")
-metadata/_custom_type_script = "uid://cr2u2svftowtg"
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="Area2D"]
-shape = SubResource("RectangleShape2D_o6xl0")
-
-[node name="Node" type="Node" parent="Area2D"]
-script = SubResource("GDScript_o6xl0")
+position = Vector2(5218, -3566)
