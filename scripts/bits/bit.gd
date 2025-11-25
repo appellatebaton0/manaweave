@@ -6,7 +6,7 @@
 
 @onready var bot:Bot = get_bot()
 func get_bot(depth := 5, with:Node = self) -> Bot:
-	if depth == 0:
+	if depth == 0 or with == null:
 		return null
 	
 	if isolated:

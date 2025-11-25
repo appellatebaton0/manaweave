@@ -22,6 +22,10 @@ RoomManager="*res://scripts/globals/room_manager.gd"
 
 enabled=PackedStringArray("res://addons/godot_super-wakatime/plugin.cfg")
 
+[global_group]
+
+Room="The rooms that make up the environment of the game."
+
 [input]
 
 Left={
