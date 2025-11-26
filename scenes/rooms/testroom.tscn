@@ -160,7 +160,7 @@ terrain_set_0/terrain_0/color = Color(1, 0.8333334, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_tefeu")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6bylj"]
-size = Vector2(16, 1024)
+size = Vector2(550, 1024)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w8fs8"]
 size = Vector2(256, 1024)
@@ -179,17 +179,33 @@ script = ExtResource("2_82dy4")
 
 [node name="DoorBit" type="StaticBody2D" parent="."]
 process_mode = 1
-position = Vector2(2408, -1346)
+position = Vector2(2939, -1346)
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("3_82dy4")
 isolated = true
 
-[node name="Node" type="Node" parent="DoorBit"]
+[node name="Node" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("5_6bylj")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": null,
+"exited_range_right": null,
+"interact_left": null,
+"interact_right": NodePath("../Open")
+}
 
-[node name="Open" type="Node" parent="DoorBit"]
+[node name="Open" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("4_w8fs8")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": NodePath("../Node"),
+"exited_range_right": NodePath("../Node"),
+"interact_left": null,
+"interact_right": null
+}
 
 [node name="PlayerDetector" type="Area2D" parent="DoorBit"]
 process_mode = 1
@@ -201,7 +217,7 @@ position = Vector2(384, 0)
 shape = SubResource("RectangleShape2D_6bylj")
 
 [node name="CollisionShape2D3" type="CollisionShape2D" parent="DoorBit/PlayerDetector"]
-position = Vector2(-384, 0)
+position = Vector2(-366, 0)
 shape = SubResource("RectangleShape2D_6bylj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit"]

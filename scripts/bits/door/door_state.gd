@@ -10,6 +10,17 @@
 @warning_ignore("unused_signal") signal interact_right ## The user has interacted w/ the door from the right.
 @warning_ignore("unused_signal") signal interact_left ## The user has interacted w/ the door from the left.
 
+
+## States to switch to upon a given event.
+@export var switches:Dictionary[String, DoorStateBit] = {
+	"exited_range_left": null,
+	"exited_range_right": null,
+	"entered_range_left": null,
+	"entered_range_right": null,
+	"interact_right": null,
+	"interact_left": null,
+}
+
 @onready var door:DoorBit
 
 ## Action functions

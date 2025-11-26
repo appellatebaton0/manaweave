@@ -43,13 +43,7 @@ func _process(delta: float) -> void:
 	
 	# User is interacting w/ the door.
 	if user_in_range and Input.is_action_just_pressed("Interact"):
-		match user_direction:
-			1:
-				interact_right.emit()
-				pass
-			-1:
-				interact_left.emit()
-				pass
+		directional_emit(interact_left, interact_right)
 
 var user:Bot # The bot trying to use the door.
 var user_direction := 0
@@ -89,20 +83,27 @@ func update_user_data(bit:Bit):
 
 ## Emits left_signal if the user is on the left, right_signal if they're on the right.
 func directional_emit(left_signal:Signal, right_signal:Signal):
-	if user_direction == -1: left_signal.emit()
-	elif user_direction == 1: right_signal.emit()
+	if user_direction == -1: emit_as_state_action(left_signal)
+	elif user_direction == 1: emit_as_state_action(right_signal)
 
 ## Everything to do to a state when it's assigned to this door.
 func init_state(state:DoorStateBit):
 	state.door = self
 
 ## Passes the signal from the door to its state, and changes the state if necessary.
-func emit_as_state_pass(signal_name:String):
-	emit_signal(signal_name)
+func emit_as_state_action(sig:Signal):
+	sig.emit() # Emit normally
+	
 	
 	if current_state != null:
-		current_state.emit_signal(signal_name)
-	
+		
+		var sig_name = sig.get_name()
+		
+		# Emit for the current state
+		current_state.emit_signal(sig_name)
+		
+		# Change the state to what the DoorState recommends.
+		change_state(current_state.switches[sig_name])
 
 ## _-_
 ## Initializing all the variables.
