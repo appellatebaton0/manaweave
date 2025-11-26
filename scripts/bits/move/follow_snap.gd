@@ -21,7 +21,6 @@ func get_next_velocity():
 func _on_ready() -> void:
 	if target == null: for child in get_children(): if child is NodeValue: 
 		target = child
-		print(child)
 		break
 
 func _phys_active(delta:float) -> void:

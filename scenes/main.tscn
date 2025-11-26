@@ -19,12 +19,14 @@ size = Vector2(256, 256)
 
 [node name="Node" type="Node"]
 
-[node name="Player" type="Sprite2D" parent="."]
+[node name="Player" type="Sprite2D" parent="." groups=["Player"]]
 position = Vector2(3561, -1250)
 texture = SubResource("GradientTexture2D_sugp2")
 script = ExtResource("1_o5qli")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="Player"]
+collision_layer = 2
+collision_mask = 9
 script = ExtResource("2_0wfyh")
 
 [node name="RunnJump" type="Node" parent="Player/CharacterBody2D"]
@@ -51,4 +53,3 @@ input = NodePath("../../../../Player")
 metadata/_custom_type_script = "uid://b8645sh22sjky"
 
 [node name="TestRoom" parent="." instance=ExtResource("6_tefeu")]
-position = Vector2(5218, -3566)
