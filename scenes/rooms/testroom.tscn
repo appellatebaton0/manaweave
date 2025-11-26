@@ -1,9 +1,10 @@
-[gd_scene load_steps=11 format=4 uid="uid://du2iw1aap3iee"]
+[gd_scene load_steps=12 format=4 uid="uid://du2iw1aap3iee"]
 
 [ext_resource type="Texture2D" uid="uid://dbcpt3shyumio" path="res://assets/resources/tileset.tres" id="1_4sjih"]
 [ext_resource type="Script" uid="uid://bfu5x2xplye6c" path="res://scripts/bits/room.gd" id="2_82dy4"]
 [ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="3_82dy4"]
 [ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="4_w8fs8"]
+[ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="5_6bylj"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tefeu"]
 texture = ExtResource("1_4sjih")
@@ -159,7 +160,7 @@ terrain_set_0/terrain_0/color = Color(1, 0.8333334, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_tefeu")
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_6bylj"]
-size = Vector2(819.2, 1024)
+size = Vector2(16, 1024)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_w8fs8"]
 size = Vector2(256, 1024)
@@ -184,16 +185,23 @@ collision_mask = 2
 script = ExtResource("3_82dy4")
 isolated = true
 
+[node name="Node" type="Node" parent="DoorBit"]
+script = ExtResource("5_6bylj")
+
 [node name="Open" type="Node" parent="DoorBit"]
 script = ExtResource("4_w8fs8")
 
 [node name="PlayerDetector" type="Area2D" parent="DoorBit"]
 process_mode = 1
-position = Vector2(-7, 235)
 collision_layer = 8
 collision_mask = 2
 
 [node name="CollisionShape2D2" type="CollisionShape2D" parent="DoorBit/PlayerDetector"]
+position = Vector2(384, 0)
+shape = SubResource("RectangleShape2D_6bylj")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="DoorBit/PlayerDetector"]
+position = Vector2(-384, 0)
 shape = SubResource("RectangleShape2D_6bylj")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit"]
