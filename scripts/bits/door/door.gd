@@ -11,7 +11,8 @@ signal entered_range_right ## The user has entered the range of the door from th
 signal interact_right ## The user has interacted w/ the door from the right.
 signal interact_left ## The user has interacted w/ the door from the left.
 
-@export var initial_state:DoorStateBit
+@export var slot:RoomManager.ENTRANCES ## The entrance this door is in.
+@export var initial_state:DoorStateBit ## The initial state of the door. Defaults to its first child.
 var current_state:DoorStateBit
 
 func change_state(to:DoorStateBit):

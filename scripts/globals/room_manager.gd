@@ -14,18 +14,14 @@ const ROOM_PIXEL_SIZE = ROOM_SIZE * TILE_SIZE
 ## X       X
 ## \ X - X /
 enum ENTRANCES {
-	TOP_LEFT,    TOP_RIGHT,    
-	RIGHT_TOP,    RIGHT_BOTTOM,
-	BOTTOM_RIGHT, BOTTOM_LEFT, 
-	LEFT_BOTTOM,  LEFT_TOP     
-}
-
-## An enum for the possible states of an entrance.
-enum ENTRANCE_STATE {
-	OPEN,   ## The entrance is open, and can be walked through freely.
-	CLOSED, ## The entrance is closed, and can't be walked through until next shuffle.
-	LOCKED, ## The entrance is locked, and needs some sort of key to open.
-	INVALID ## There is no supported entrance here.
+	TOP_LEFT,     ## The entrance on the left of the top side.
+	TOP_RIGHT,    ## The entrance on the right of the top side.
+	RIGHT_TOP,    ## The entrance on the top of the right side.
+	RIGHT_BOTTOM, ## The entrance on the bottom of the right side.
+	BOTTOM_RIGHT, ## The entrance on the right of the bottom side.
+	BOTTOM_LEFT,  ## The entrance on the left of the bottom side.
+	LEFT_BOTTOM,  ## The entrance on the bottom of the left side.
+	LEFT_TOP      ## The entrance on the top of the left side.
 }
 
 @onready var room_paths := get_room_paths()
