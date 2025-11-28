@@ -57,7 +57,7 @@ script = ExtResource("2_0wfyh")
 [node name="FollowSnap" type="Node" parent="Camera2D/CharacterBody2D"]
 script = ExtResource("4_tefeu")
 
-[node name="ManualNode" type="Node" parent="Camera2D/CharacterBody2D/FollowSnap" node_paths=PackedStringArray("input")]
+[node name="GetPlayer" type="Node" parent="Camera2D/CharacterBody2D/FollowSnap" node_paths=PackedStringArray("input")]
 script = ExtResource("5_tefeu")
 input = NodePath("../../../../Player")
 metadata/_custom_type_script = "uid://b8645sh22sjky"

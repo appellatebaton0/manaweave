@@ -24,17 +24,41 @@ enum ENTRANCES {
 	LEFT_TOP      ## The entrance on the top of the left side.
 }
 
-## Returns the given coordinates as room coordinates
-func to_room_coords(p:Vector2) -> Vector2i:
-	return Vector2( floor(p.x / ROOM_PIXEL_SIZE), floor(p.y / ROOM_PIXEL_SIZE) )
-## Returns the given coordinates locked to the room grid.
-func grid_lock(p:Vector2) -> Vector2:
-	return to_room_coords(p) * ROOM_PIXEL_SIZE
+## An enum for the areas.
+enum AREAS {BRASS}
+
+## Shuffle the layout of the rooms.
+func shuffle_area(area:AREAS) -> void: 
+	
+	## Shuffles all the rooms within an area.
+	
+	pass
+
+func shuffle() -> void:
+	for key in AREAS:
+		print(key)
 
 func _ready() -> void:
 	## Make sure there are rooms to load... please...
 	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
+	
+	shuffle()
+	
+## Helper functions.
 
+## Returns the given coordinates as room coordinates
+func world_to_room(p:Vector2) -> Vector2i:
+	return Vector2( floor(p.x / ROOM_PIXEL_SIZE), floor(p.y / ROOM_PIXEL_SIZE) )
+## Returns the given room coordinates as regular coordinates
+func room_to_world(p:Vector2) -> Vector2i:
+	return p * ROOM_PIXEL_SIZE
+
+## Returns the given coordinates locked to the room grid.
+func grid_lock(p:Vector2) -> Vector2:
+	return room_to_world(world_to_room(p))
+
+
+## Get the paths to all valid rooms.
 @onready var room_paths := get_room_paths()
 func get_room_paths(path := ROOM_PATH) -> PackedStringArray:
 	
