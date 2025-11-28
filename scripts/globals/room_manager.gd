@@ -24,6 +24,17 @@ enum ENTRANCES {
 	LEFT_TOP      ## The entrance on the top of the left side.
 }
 
+## Returns the given coordinates as room coordinates
+func to_room_coords(p:Vector2) -> Vector2i:
+	return Vector2( floor(p.x / ROOM_PIXEL_SIZE), floor(p.y / ROOM_PIXEL_SIZE) )
+## Returns the given coordinates locked to the room grid.
+func grid_lock(p:Vector2) -> Vector2:
+	return to_room_coords(p) * ROOM_PIXEL_SIZE
+
+func _ready() -> void:
+	## Make sure there are rooms to load... please...
+	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
+
 @onready var room_paths := get_room_paths()
 func get_room_paths(path := ROOM_PATH) -> PackedStringArray:
 	
@@ -44,8 +55,3 @@ func get_room_paths(path := ROOM_PATH) -> PackedStringArray:
 	else:
 		push_error("An error occurred when trying to access the path: ", path)
 	return paths
-
-func _ready() -> void:
-	## Make sure there are rooms to load... please...
-	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
-	

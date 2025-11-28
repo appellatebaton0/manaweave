@@ -1,4 +1,4 @@
-[gd_scene load_steps=10 format=3 uid="uid://2vn41m46knrf"]
+[gd_scene load_steps=11 format=3 uid="uid://2vn41m46knrf"]
 
 [ext_resource type="Script" uid="uid://cybs26nrjtuw4" path="res://scripts/bits/bot.gd" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://buqr7nq4r1by7" path="res://scripts/bits/move/move_master.gd" id="2_0wfyh"]
@@ -14,13 +14,18 @@ gradient = SubResource("Gradient_0wfyh")
 width = 256
 height = 256
 
+[sub_resource type="Curve" id="Curve_tefeu"]
+_limits = [0.0, 25.0, 0.0, 0.4]
+_data = [Vector2(0, 25), 0.0, 21.883888, 0, 0, Vector2(0.20053619, 17.875782), -127.552, -127.552, 0, 0, Vector2(0.4, 0), 0.0, 0.0, 0, 0]
+point_count = 3
+
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyhfs"]
 size = Vector2(256, 256)
 
 [node name="Node" type="Node"]
 
 [node name="Player" type="Sprite2D" parent="." groups=["Player"]]
-position = Vector2(4251, -1250)
+position = Vector2(1288, -5322)
 texture = SubResource("GradientTexture2D_sugp2")
 script = ExtResource("1_o5qli")
 
@@ -31,8 +36,13 @@ script = ExtResource("2_0wfyh")
 
 [node name="RunnJump" type="Node" parent="Player/CharacterBody2D"]
 script = ExtResource("3_jyhfs")
-ground_max_speed = 1300.0
-air_max_speed = 1300.0
+jump_curve = SubResource("Curve_tefeu")
+ground_max_speed = 1750.0
+ground_friction = 5250.0
+ground_acceleration = 8750.0
+air_max_speed = 1500.0
+air_friction = 4000.0
+air_acceleration = 6500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/CharacterBody2D"]
 shape = SubResource("RectangleShape2D_jyhfs")
