@@ -136,20 +136,13 @@ func _ready() -> void:
 	## Make sure there are rooms to load... please...
 	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
 	
-	print(room_paths)
+	var set_size := Vector2i(5, 5)
+	var set_start :Dictionary[Vector2i, RoomBit]
 	
-	area_database[AREAS.BRASS] = area_data.new({
-		Vector2(0,0): load(room_paths.pick_random()).instantiate(),
-		Vector2(0,1): load(room_paths.pick_random()).instantiate(),
-		Vector2(1,0): load(room_paths.pick_random()).instantiate(),
-		Vector2(1,1): load(room_paths.pick_random()).instantiate()
-	}, Vector2i(2,2))
+	for i in range(set_size.x): for j in range(set_size.y):
+		set_start[Vector2i(i,j)] = load(room_paths.pick_random()).instantiate()
 	
-	print(area_database[AREAS.BRASS].data)
-	
-	for key in area_database[AREAS.BRASS].data:
-		var value = area_database[AREAS.BRASS].data[key]
-		print("P: ", value.get_parent(), " <- ", value)
+	area_database[AREAS.BRASS] = area_data.new(set_start, set_size)
 	
 
 

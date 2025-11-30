@@ -25,7 +25,7 @@ size = Vector2(256, 256)
 [node name="Node" type="Node" groups=["RoomParent"]]
 
 [node name="Player" type="Sprite2D" parent="." groups=["Player"]]
-position = Vector2(1288, -5322)
+position = Vector2(293980, 191103)
 texture = SubResource("GradientTexture2D_sugp2")
 script = ExtResource("1_o5qli")
 
@@ -37,18 +37,19 @@ script = ExtResource("2_0wfyh")
 [node name="RunnJump" type="Node" parent="Player/CharacterBody2D"]
 script = ExtResource("3_jyhfs")
 jump_curve = SubResource("Curve_tefeu")
-ground_max_speed = 1750.0
-ground_friction = 5250.0
-ground_acceleration = 8750.0
-air_max_speed = 1500.0
-air_friction = 4000.0
-air_acceleration = 6500.0
+jump_multiplier = 200.0
+ground_max_speed = 5250.0
+ground_friction = 15750.0
+ground_acceleration = 26250.0
+air_max_speed = 4500.0
+air_friction = 12000.0
+air_acceleration = 19500.0
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="Player/CharacterBody2D"]
 shape = SubResource("RectangleShape2D_jyhfs")
 
 [node name="Camera2D" type="Camera2D" parent="."]
-zoom = Vector2(0.2, 0.2)
+zoom = Vector2(0.01, 0.01)
 script = ExtResource("1_o5qli")
 
 [node name="CharacterBody2D" type="CharacterBody2D" parent="Camera2D"]
