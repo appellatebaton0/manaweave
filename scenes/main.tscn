@@ -25,7 +25,7 @@ size = Vector2(256, 256)
 [node name="Node" type="Node" groups=["RoomParent"]]
 
 [node name="Player" type="Sprite2D" parent="." groups=["Player"]]
-position = Vector2(293980, 191103)
+position = Vector2(39132, 22655)
 texture = SubResource("GradientTexture2D_sugp2")
 script = ExtResource("1_o5qli")
 

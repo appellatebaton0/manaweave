@@ -7,6 +7,7 @@ const TILE_SIZE := 128
 const ROOM_PIXEL_SIZE := ROOM_SIZE * TILE_SIZE
 
 @onready var PARENT:Node = get_tree().get_first_node_in_group("RoomParent")
+@onready var PLAYER:Node = get_tree().get_first_node_in_group("Player")
 
 ## An enum for the possible open entrances of a room, arranged clockwise from top left.
 ## Rooms have 8 entrances; (each X is an entrance)
@@ -27,14 +28,31 @@ enum ENTRANCES {
 }
 
 ## An enum for the areas.
-enum AREAS {BRASS=0}
+enum AREAS {BRASS}
 
 class area_data:
 	
+	# Conditions
 	func _by_area(a:RoomBit, b:RoomBit) -> bool:
 		var aa = a.room_size.x * a.room_size.y
 		var ba = b.room_size.x * b.room_size.y
 		return aa >= ba
+	func _should_load(a:Vector2i) -> bool:
+		
+		
+		var b := RoomManager.world_to_room(RoomManager.PLAYER.global_position)
+		
+		print("-")
+		
+		print(a, " - ", b)
+		print(abs(a.x - b.x), " + ", + abs(a.y - b.y))
+		
+		var total_distance = abs(a.x - b.x) + abs(a.y - b.y)
+		
+		print(total_distance, " -> ", total_distance < 4)
+		
+		return total_distance < 3
+	
 	func shuffle() -> void:
 		
 		## Shuffles all the rooms within the area.
@@ -51,6 +69,7 @@ class area_data:
 		
 		# Sort the array by the area each room takes up.
 		rooms.sort_custom(_by_area)
+		
 		# Place the rooms by size, erring if something goes wrong.
 		for room in rooms:
 			var pos := place(room)
@@ -59,13 +78,13 @@ class area_data:
 			else: # The position is valid; relocate the room.
 				room.global_position = RoomManager.room_to_world(pos)
 				
-				## NOTE: Anything else?
+				## NOTE: Update the door states for the rooms...
+				
+				# Add each room as a child of the parent.
+				if _should_load(pos): load_room(room)
 			
 		
 	#	
-	#	X1 - Unassign all unlocked rooms from their slots.
-	#	X2 - Start re-placing all the rooms, from biggest to smallest area.
-	# 	|- Need a way to tell if a room can be placed regardless of its size. (Reminds of Robodungeon)
 	#	3 - Do a final pass to update the positions and door states, or do this while placing
 	#	|- Make open ones set to the initial_state field, so they can be locked OR open.
 	#	
@@ -76,14 +95,14 @@ class area_data:
 		data = set_data
 		size = set_size
 		
-		for key in data.keys():
-			var value = data[key]
-			
-			RoomManager.PARENT.add_child(value)
 		
-		shuffle()
-			
-		pass
+		
+		shuffle() # Shuffle when initialized.
+	
+	## Load a room into the world.
+	func load_room(room:RoomBit) -> void: RoomManager.PARENT.add_child(room)
+	## Unload a room from the world.
+	func unload_room(room:RoomBit) -> void: RoomManager.PARENT.remove_child(room)
 	
 	## Try to place a room at a position, returning whether it suceeded.
 	func insert(key:Vector2i, value:RoomBit) -> bool: 
