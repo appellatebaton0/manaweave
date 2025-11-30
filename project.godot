@@ -27,6 +27,7 @@ enabled=PackedStringArray("res://addons/godot_super-wakatime/plugin.cfg")
 
 Room="The rooms that make up the environment of the game."
 Player=""
+RoomParent="The parent that loaded rooms are added to."
 
 [input]
 

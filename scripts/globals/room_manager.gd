@@ -2,9 +2,11 @@ extends Node
 
 const ROOM_PATH = "res://scenes/rooms/"
 
-const ROOM_SIZE = 128
-const TILE_SIZE = 128
-const ROOM_PIXEL_SIZE = ROOM_SIZE * TILE_SIZE
+const ROOM_SIZE := 128
+const TILE_SIZE := 128
+const ROOM_PIXEL_SIZE := ROOM_SIZE * TILE_SIZE
+
+@onready var PARENT:Node = get_tree().get_first_node_in_group("RoomParent")
 
 ## An enum for the possible open entrances of a room, arranged clockwise from top left.
 ## Rooms have 8 entrances; (each X is an entrance)
@@ -56,6 +58,8 @@ class area_data:
 			if pos == Vector2i.MIN: push_error("Failed to place ", room, " while shuffling.")
 			else: # The position is valid; relocate the room.
 				room.global_position = RoomManager.room_to_world(pos)
+				
+				## NOTE: Anything else?
 			
 		
 	#	
@@ -71,6 +75,14 @@ class area_data:
 	func _init(set_data:Dictionary[Vector2i, RoomBit], set_size:Vector2i) -> void:
 		data = set_data
 		size = set_size
+		
+		for key in data.keys():
+			var value = data[key]
+			
+			RoomManager.PARENT.add_child(value)
+		
+		shuffle()
+			
 		pass
 	
 	## Try to place a room at a position, returning whether it suceeded.
@@ -78,8 +90,8 @@ class area_data:
 		# IF it doesn't fit, fail.
 		if key + value.room_size > size: return false
 		
-		var x_range = range(key.x, key.x + value.room_size.x + 1)
-		var y_range = range(key.y, key.y + value.room_size.y + 1)
+		var x_range = range(key.x, key.x + value.room_size.x)
+		var y_range = range(key.y, key.y + value.room_size.y)
 		
 		# Make sure all the slots it's attempting to fill are empty.
 		for i in x_range: for j in y_range:
@@ -117,30 +129,30 @@ class area_data:
 
 var area_database:Dictionary[AREAS, area_data]
 
-## Shuffles all the rooms within an area.
-func shuffle_area(_area:AREAS) -> void: 
-	
-	## Shuffles all the rooms within an area.
-#	
-#	1 - Unassign all unlocked rooms from their slots.
-#	2 - Start re-placing all the rooms, from biggest to smallest area.
-# 	|- Need a way to tell if a room can be placed regardless of its size. (Reminds of Robodungeon)
-#	3 - Do a final pass to update the positions and door states, or do this while placing
-#	|- Make open ones set to the initial_state field, so they can be locked OR open.
-#	
-#	
-#	
-	pass
-
 ## Shuffles all rooms in all the areas.
-func shuffle() -> void: for AREA in AREAS: shuffle_area(AREA)
+func shuffle() -> void: for AREA in AREAS: area_database[AREA].shuffle()
 
 func _ready() -> void:
 	## Make sure there are rooms to load... please...
 	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
 	
-	for i in range(3):
-		print(i)
+	print(room_paths)
+	
+	area_database[AREAS.BRASS] = area_data.new({
+		Vector2(0,0): load(room_paths.pick_random()).instantiate(),
+		Vector2(0,1): load(room_paths.pick_random()).instantiate(),
+		Vector2(1,0): load(room_paths.pick_random()).instantiate(),
+		Vector2(1,1): load(room_paths.pick_random()).instantiate()
+	}, Vector2i(2,2))
+	
+	print(area_database[AREAS.BRASS].data)
+	
+	for key in area_database[AREAS.BRASS].data:
+		var value = area_database[AREAS.BRASS].data[key]
+		print("P: ", value.get_parent(), " <- ", value)
+	
+
+
 ## Helper functions.
 
 ## Returns the given coordinates as room coordinates
@@ -157,9 +169,9 @@ func grid_lock(p:Vector2) -> Vector2:
 
 ## Get the paths to all valid rooms.
 @onready var room_paths := get_room_paths()
-func get_room_paths(path := ROOM_PATH) -> PackedStringArray:
+func get_room_paths(path := ROOM_PATH) -> Array[String]:
 	
-	var paths:PackedStringArray = []
+	var paths:Array[String] = []
 	
 	var dir = DirAccess.open(path)
 	

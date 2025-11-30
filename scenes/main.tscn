@@ -22,7 +22,7 @@ point_count = 3
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_jyhfs"]
 size = Vector2(256, 256)
 
-[node name="Node" type="Node"]
+[node name="Node" type="Node" groups=["RoomParent"]]
 
 [node name="Player" type="Sprite2D" parent="." groups=["Player"]]
 position = Vector2(1288, -5322)
@@ -63,3 +63,4 @@ input = NodePath("../../../../Player")
 metadata/_custom_type_script = "uid://b8645sh22sjky"
 
 [node name="TestRoom" parent="." instance=ExtResource("6_tefeu")]
+visible = false
