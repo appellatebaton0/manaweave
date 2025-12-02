@@ -28,28 +28,16 @@ enum ENTRANCES {
 }
 
 ## An enum for the areas.
-enum AREAS {BRASS}
+enum AREAS {BRASS=0}
 
 class area_data:
 	
-	# Conditions
-	func _by_area(a:RoomBit, b:RoomBit) -> bool:
-		var aa = a.room_size.x * a.room_size.y
-		var ba = b.room_size.x * b.room_size.y
-		return aa >= ba
+	
+	
+	# Load Condition
 	func _should_load(a:Vector2i) -> bool:
-		
-		
 		var b := RoomManager.world_to_room(RoomManager.PLAYER.global_position)
-		
-		print("-")
-		
-		print(a, " - ", b)
-		print(abs(a.x - b.x), " + ", + abs(a.y - b.y))
-		
 		var total_distance = abs(a.x - b.x) + abs(a.y - b.y)
-		
-		print(total_distance, " -> ", total_distance < 4)
 		
 		return total_distance < 3
 	
@@ -68,7 +56,11 @@ class area_data:
 			rooms.append(value) # Save the room for shuffling.
 		
 		# Sort the array by the area each room takes up.
-		rooms.sort_custom(_by_area)
+		var next:Array[RoomBit]
+		for value in RoomManager.merge_sort(rooms, RoomManager.by_area): if value is RoomBit:
+			next.append(value)
+		rooms = next
+		#rooms.sort_custom(_by_area)
 		
 		# Place the rooms by size, erring if something goes wrong.
 		for room in rooms:
@@ -99,6 +91,9 @@ class area_data:
 		
 		shuffle() # Shuffle when initialized.
 	
+	func update_load() -> void:
+		for key in data: if _should_load(key): load_room(data[key]) 
+		else: unload_room(data[key])
 	## Load a room into the world.
 	func load_room(room:RoomBit) -> void: RoomManager.PARENT.add_child(room)
 	## Unload a room from the world.
@@ -144,25 +139,88 @@ class area_data:
 	# What rooms are filling coords or smth.
 	var data:Dictionary[Vector2i, RoomBit]
 	var size := Vector2i(10, 10)
-	
 
 var area_database:Dictionary[AREAS, area_data]
 
 ## Shuffles all rooms in all the areas.
 func shuffle() -> void: for AREA in AREAS: area_database[AREA].shuffle()
 
+## Sorting
+# The sorting condition
+func by_area(a:RoomBit, b:RoomBit) -> bool:
+	var a_area = a.room_size.x * a.room_size.y
+	var b_area = b.room_size.x * b.room_size.y
+	return a_area > b_area
+# Sorts the array via merge sort.
+func merge_sort(array:Array, condition:Callable) -> Array:
+	
+	var length = len(array)
+	
+	if length <= 1: return array
+	
+	@warning_ignore("integer_division")
+	var left = array.slice(0, floor((length + 1) / 2))
+	@warning_ignore("integer_division")
+	var right = array.slice(floor((length + 1) / 2), length)
+	
+	
+	left  = merge_sort(left,  condition)
+	right = merge_sort(right, condition)
+	
+	# The array's already sorted.
+	if   len(left)  <= 0: return right 
+	elif len(right) <= 0: return left 
+	
+	var li = 0
+	var ri = 0
+	
+	var response:Array
+
+	while len(response) < len(left) + len(right):
+		
+		# One of the arrays is empty; append the other and end.
+		if li >= len(left): 
+			response.append_array(right.slice(ri))
+			break
+		elif ri >= len(right):
+			response.append_array(left.slice(li))
+			break
+		
+		# Otherwise, append the next.
+		if condition.call(left[li], right[ri]): 
+			response.append(right[ri])
+			ri += 1
+		else:
+			response.append(left[li])
+			li += 1
+	
+	return response
+
 func _ready() -> void:
 	## Make sure there are rooms to load... please...
 	assert(len(room_paths) > 0, "No rooms found in "+ ROOM_PATH)
-	
+
 	var set_size := Vector2i(5, 5)
 	var set_start :Dictionary[Vector2i, RoomBit]
-	
+
 	for i in range(set_size.x): for j in range(set_size.y):
 		set_start[Vector2i(i,j)] = load(room_paths.pick_random()).instantiate()
-	
+
 	area_database[AREAS.BRASS] = area_data.new(set_start, set_size)
+
+var last_player_room:Vector2i
+func _process(_delta: float) -> void:
+	var current_player_room = world_to_room(PLAYER.global_position)
 	
+	# If the room the player is in has changed...
+	if last_player_room != current_player_room:
+		
+		# Update the load states of the rooms.
+		for AREA in AREAS:
+			area_database[AREAS[AREA]].update_load()
+		
+		# Update the current coordinate.
+		last_player_room = current_player_room
 
 
 ## Helper functions.
