@@ -18,6 +18,7 @@ config/icon="res://icon.svg"
 [autoload]
 
 RoomManager="*res://scripts/globals/room_manager.gd"
+Lib="*res://scripts/globals/lib.gd"
 
 [editor_plugins]
 

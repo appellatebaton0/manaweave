@@ -1,11 +1,10 @@
-[gd_scene load_steps=11 format=3 uid="uid://2vn41m46knrf"]
+[gd_scene load_steps=10 format=3 uid="uid://2vn41m46knrf"]
 
 [ext_resource type="Script" uid="uid://cybs26nrjtuw4" path="res://scripts/bits/bot.gd" id="1_o5qli"]
 [ext_resource type="Script" uid="uid://buqr7nq4r1by7" path="res://scripts/bits/move/move_master.gd" id="2_0wfyh"]
 [ext_resource type="Script" uid="uid://c2ld0p1dmtbve" path="res://scripts/bits/move/control/runnjump.gd" id="3_jyhfs"]
-[ext_resource type="Script" uid="uid://73fhp1jpumqv" path="res://scripts/bits/move/follow_snap.gd" id="4_tefeu"]
+[ext_resource type="Script" path="res://scripts/bits/move/follow_snap.gd" id="4_tefeu"]
 [ext_resource type="Script" uid="uid://b8645sh22sjky" path="res://scripts/values/node/manual.gd" id="5_tefeu"]
-[ext_resource type="PackedScene" uid="uid://du2iw1aap3iee" path="res://scenes/rooms/testroom.tscn" id="6_tefeu"]
 
 [sub_resource type="Gradient" id="Gradient_0wfyh"]
 
@@ -62,6 +61,3 @@ script = ExtResource("4_tefeu")
 script = ExtResource("5_tefeu")
 input = NodePath("../../../../Player")
 metadata/_custom_type_script = "uid://b8645sh22sjky"
-
-[node name="TestRoom" parent="." instance=ExtResource("6_tefeu")]
-visible = false
