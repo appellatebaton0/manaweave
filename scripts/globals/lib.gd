@@ -1,5 +1,7 @@
 extends Node
 
+## Loading Files
+
 # Returns an array of instantiated Nodes from a folder.
 func mass_instantiate(path) -> Array[Node]:
 	var nodes:Array[Node]
@@ -41,3 +43,16 @@ func get_file_paths_at(path) -> Array[String]:
 	if len(paths) <= 0: push_error("Found no files to load when attempting path ", path)
 	
 	return paths
+
+## Managing SceneStates
+
+# Getting the value of a property from a node.
+func state_get(from:SceneState, node:int, prop:String) -> Variant:
+	return from.get_node_property_value(node, get_property_index(from, node, prop))
+
+# Getting the index of a property in a node.
+func get_property_index(from:SceneState, node:int, prop:String) -> int:
+	for i in range(from.get_node_property_count(node)):
+		if from.get_node_property_name(node, i) == prop: return i
+	push_error("Was unable to find an asked-for property; ", prop, " from index ", node, " in ", from)
+	return -ERR_DOES_NOT_EXIST

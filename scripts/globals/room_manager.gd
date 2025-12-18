@@ -2,6 +2,8 @@ extends Node
 
 signal rooms_readied
 
+const ROOM_DATA_PATH = "res://assets/resources/room_data"
+
 const REQUIRED_ROOM_PATH = "res://scenes/rooms/"
 const FILLER_ROOM_PATH = "res://scenes/rooms/"
 
@@ -11,16 +13,26 @@ const TILE_SIZE := 128
 @onready var PLAYER:Node = get_tree().get_first_node_in_group("Player")
 
 func _ready() -> void: 
-	print("Connecting")
-	for room in rooms:
-		room.ready.connect(_on_room_readied)
-	for room in filler_rooms:
-		room.ready.connect(_on_room_readied)
-	print("connected")
-	
-	await rooms_readied
-	
-	shuffle()
+	for room in Lib.mass_load(REQUIRED_ROOM_PATH):
+		print("Running check for ", room, "...")
+		
+		var new1:RoomBit = room.instantiate()
+		print("Check 1: ", new1.data.door_count)
+		print("Modifying...")
+		new1.data.door_count += 1
+		var new2:RoomBit = room.instantiate()
+		print("Check 2: ", new2.data.door_count)
+	#print("Connecting")
+	#for room in rooms:
+		#print(room.data)
+		#room.ready.connect(_on_room_readied)
+	#for room in filler_rooms:
+		#room.ready.connect(_on_room_readied)
+	#print("connected")
+	#
+	#await rooms_readied
+	#
+	#shuffle()
 
 
 func shuffle():

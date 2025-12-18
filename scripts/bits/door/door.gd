@@ -8,9 +8,8 @@ enum ORI{NORTH, EAST, SOUTH, WEST}
 @export var orientation:ORI
 
 ## The path of the room the door is connected to.
-var room_path:String
-var door_id:int
-
+@export_storage var room_path:String
+@export_storage var door_id:int
 
 ## See if two doors have matching orientations. 
 func corresponds_with(with:DoorBit) -> bool:
