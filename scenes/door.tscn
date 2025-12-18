@@ -1,0 +1,67 @@
+[gd_scene load_steps=8 format=3 uid="uid://bnfhvj40djonp"]
+
+[ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="1_83dcw"]
+[ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="2_la1wf"]
+[ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="3_18pbm"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_6bylj"]
+size = Vector2(550, 1024)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_w8fs8"]
+size = Vector2(256, 1024)
+
+[sub_resource type="Gradient" id="Gradient_6bylj"]
+
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_drt4o"]
+gradient = SubResource("Gradient_6bylj")
+width = 256
+height = 1024
+
+[node name="DoorBit" type="StaticBody2D"]
+process_mode = 1
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("1_83dcw")
+orientation = 2
+isolated = true
+
+[node name="Node" type="Node" parent="." node_paths=PackedStringArray("switches")]
+script = ExtResource("2_la1wf")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": null,
+"exited_range_right": null,
+"interact_left": null,
+"interact_right": NodePath("")
+}
+
+[node name="Open" type="Node" parent="." node_paths=PackedStringArray("switches")]
+script = ExtResource("3_18pbm")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": NodePath(""),
+"exited_range_right": NodePath(""),
+"interact_left": null,
+"interact_right": null
+}
+
+[node name="PlayerDetector" type="Area2D" parent="."]
+process_mode = 1
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerDetector"]
+position = Vector2(384, 0)
+shape = SubResource("RectangleShape2D_6bylj")
+
+[node name="CollisionShape2D3" type="CollisionShape2D" parent="PlayerDetector"]
+position = Vector2(-366, 0)
+shape = SubResource("RectangleShape2D_6bylj")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_w8fs8")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("GradientTexture2D_drt4o")

@@ -1,10 +1,11 @@
-[gd_scene load_steps=12 format=4 uid="uid://du2iw1aap3iee"]
+[gd_scene load_steps=13 format=4 uid="uid://du2iw1aap3iee"]
 
 [ext_resource type="Texture2D" uid="uid://dbcpt3shyumio" path="res://assets/resources/tileset.tres" id="1_4sjih"]
 [ext_resource type="Script" uid="uid://bfu5x2xplye6c" path="res://scripts/bits/room.gd" id="2_82dy4"]
 [ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="3_82dy4"]
 [ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="4_w8fs8"]
 [ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="5_6bylj"]
+[ext_resource type="PackedScene" uid="uid://bnfhvj40djonp" path="res://scenes/door.tscn" id="6_drt4o"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tefeu"]
 texture = ExtResource("1_4sjih")
@@ -232,3 +233,19 @@ shape = SubResource("RectangleShape2D_w8fs8")
 
 [node name="Sprite2D" type="Sprite2D" parent="DoorBit"]
 texture = SubResource("GradientTexture2D_drt4o")
+
+[node name="@StaticBody2D@108029" type="StaticBody2D" parent="." instance=ExtResource("6_drt4o")]
+process_mode = 1
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_82dy4")
+orientation = 2
+isolated = true
+
+[node name="@StaticBody2D@108914" type="StaticBody2D" parent="." instance=ExtResource("6_drt4o")]
+process_mode = 1
+collision_layer = 8
+collision_mask = 2
+script = ExtResource("3_82dy4")
+orientation = 2
+isolated = true
