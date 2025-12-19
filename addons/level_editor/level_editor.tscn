@@ -1,6 +1,15 @@
-[gd_scene load_steps=2 format=3 uid="uid://cnxswkkw856w2"]
+[gd_scene load_steps=5 format=3 uid="uid://cnxswkkw856w2"]
 
 [ext_resource type="Script" uid="uid://cv6e37ll0o8e2" path="res://addons/level_editor/level_editor_pane.gd" id="1_owc6j"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_owc6j"]
+bg_color = Color(0, 0, 0, 0.3254902)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_4oypw"]
+bg_color = Color(0.41981313, 0.41981313, 0.4198131, 0.3254902)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp5vb"]
+bg_color = Color(0.099985994, 0.099985994, 0.099985994, 0.3254902)
 
 [node name="LevelEditor" type="Panel"]
 offset_right = 662.0
@@ -21,23 +30,53 @@ layout_mode = 2
 size_flags_horizontal = 3
 size_flags_vertical = 3
 
-[node name="Selection" type="Label" parent="ScrollContainer/VBoxContainer"]
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+text = "Selected Room:"
+horizontal_alignment = 1
+
+[node name="Selection" type="Label" parent="ScrollContainer/VBoxContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 text = "None"
 horizontal_alignment = 1
 autowrap_mode = 1
 
-[node name="DoorAdder" type="Button" parent="ScrollContainer/VBoxContainer"]
+[node name="MarginContainer" type="MarginContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
+theme_override_constants/margin_left = 10
+theme_override_constants/margin_right = 10
+
+[node name="HBoxContainer" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/MarginContainer"]
+layout_mode = 2
+
+[node name="DoorAdder" type="Button" parent="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_owc6j")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_4oypw")
+theme_override_styles/hover = SubResource("StyleBoxFlat_xp5vb")
 text = "Add Door"
+
+[node name="Update" type="Button" parent="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
+theme_override_styles/normal = SubResource("StyleBoxFlat_owc6j")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_4oypw")
+theme_override_styles/hover = SubResource("StyleBoxFlat_xp5vb")
+text = "Update Data"
+
+[node name="HSeparator" type="HSeparator" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/separation = 8
 
 [node name="Entries" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
 size_flags_vertical = 3
 
-[node name="Update" type="Button" parent="ScrollContainer/VBoxContainer"]
-layout_mode = 2
-text = "Update"
-
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/DoorAdder" to="." method="_on_door_adder_pressed"]
-[connection signal="pressed" from="ScrollContainer/VBoxContainer/Update" to="." method="_update_room_data"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer/DoorAdder" to="." method="_on_door_adder_pressed"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer/Update" to="." method="_update_room_data"]

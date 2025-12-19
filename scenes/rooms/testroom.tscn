@@ -1,8 +1,7 @@
-[gd_scene load_steps=17 format=4 uid="uid://du2iw1aap3iee"]
+[gd_scene load_steps=11 format=4 uid="uid://du2iw1aap3iee"]
 
 [ext_resource type="Texture2D" uid="uid://dbcpt3shyumio" path="res://assets/resources/tileset.tres" id="1_4sjih"]
 [ext_resource type="Script" uid="uid://bfu5x2xplye6c" path="res://scripts/bits/room.gd" id="2_82dy4"]
-[ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="3_82dy4"]
 [ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="4_w8fs8"]
 [ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="5_6bylj"]
 [ext_resource type="PackedScene" uid="uid://bnfhvj40djonp" path="res://scenes/door.tscn" id="6_drt4o"]
@@ -160,22 +159,6 @@ terrain_set_0/terrain_0/name = "Default"
 terrain_set_0/terrain_0/color = Color(1, 0.8333334, 0, 1)
 sources/1 = SubResource("TileSetAtlasSource_tefeu")
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_6bylj"]
-size = Vector2(550, 1024)
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_w8fs8"]
-size = Vector2(256, 1024)
-
-[sub_resource type="Gradient" id="Gradient_6bylj"]
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_drt4o"]
-gradient = SubResource("Gradient_6bylj")
-width = 256
-height = 1024
-
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_drt4o"]
-size = Vector2(550, 1024)
-
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_mf3b7"]
 size = Vector2(256, 1024)
 
@@ -191,94 +174,20 @@ tile_map_data = PackedByteArray("AAAAAAAAAQABAAAAAwAAAAEAAQAAAAAAAwAAAAIAAQAAAAA
 tile_set = SubResource("TileSet_o6xl0")
 script = ExtResource("2_82dy4")
 data = {
-"doors": ["Success! x2"]
+"doors": [{
+"orientation": 3,
+"path": ""
+}, {
+"orientation": 2,
+"path": ""
+}],
+"position": Vector2(0, 0)
 }
 
-[node name="DoorBit" type="StaticBody2D" parent="."]
-process_mode = 1
-position = Vector2(512, 12160)
-collision_layer = 8
-collision_mask = 2
-script = ExtResource("3_82dy4")
-isolated = true
+[node name="DoorBit" parent="." instance=ExtResource("6_drt4o")]
+position = Vector2(1620, -204)
 
-[node name="Node" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
-script = ExtResource("5_6bylj")
-switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": NodePath("../Open")
-}
-
-[node name="Open" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
-script = ExtResource("4_w8fs8")
-switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": NodePath("../Node"),
-"exited_range_right": NodePath("../Node"),
-"interact_left": null,
-"interact_right": null
-}
-
-[node name="PlayerDetector" type="Area2D" parent="DoorBit"]
-process_mode = 1
-collision_layer = 8
-collision_mask = 2
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="DoorBit/PlayerDetector"]
-position = Vector2(384, 0)
-shape = SubResource("RectangleShape2D_6bylj")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="DoorBit/PlayerDetector"]
-position = Vector2(-366, 0)
-shape = SubResource("RectangleShape2D_6bylj")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit"]
-shape = SubResource("RectangleShape2D_w8fs8")
-
-[node name="Sprite2D" type="Sprite2D" parent="DoorBit"]
-texture = SubResource("GradientTexture2D_drt4o")
-
-[node name="@StaticBody2D@108029" parent="." instance=ExtResource("6_drt4o")]
-
-[node name="@StaticBody2D@108914" parent="." instance=ExtResource("6_drt4o")]
-
-[node name="DoorBit2" parent="." instance=ExtResource("6_drt4o")]
-
-[node name="DoorBit3" parent="." instance=ExtResource("6_drt4o")]
-
-[node name="DoorBit4" parent="." instance=ExtResource("6_drt4o")]
-
-[node name="DoorBit5" type="StaticBody2D" parent="."]
-process_mode = 1
-collision_layer = 8
-collision_mask = 2
-script = ExtResource("3_82dy4")
-orientation = 2
-isolated = true
-
-[node name="DoorBit6" type="StaticBody2D" parent="."]
-process_mode = 1
-collision_layer = 8
-collision_mask = 2
-script = ExtResource("3_82dy4")
-orientation = 2
-isolated = true
-
-[node name="DoorBit7" type="StaticBody2D" parent="."]
-process_mode = 1
-position = Vector2(1676, 540)
-collision_layer = 8
-collision_mask = 2
-script = ExtResource("3_82dy4")
-orientation = 2
-isolated = true
-
-[node name="Node" type="Node" parent="DoorBit7" node_paths=PackedStringArray("switches")]
+[node name="Node2" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("5_6bylj")
 switches = {
 "entered_range_left": null,
@@ -289,7 +198,7 @@ switches = {
 "interact_right": null
 }
 
-[node name="Open" type="Node" parent="DoorBit7" node_paths=PackedStringArray("switches")]
+[node name="Open2" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("4_w8fs8")
 switches = {
 "entered_range_left": null,
@@ -300,22 +209,49 @@ switches = {
 "interact_right": null
 }
 
-[node name="PlayerDetector" type="Area2D" parent="DoorBit7"]
+[node name="PlayerDetector2" type="Area2D" parent="DoorBit"]
 process_mode = 1
 collision_layer = 8
 collision_mask = 2
 
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="DoorBit7/PlayerDetector"]
-position = Vector2(384, 0)
-shape = SubResource("RectangleShape2D_drt4o")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="DoorBit7/PlayerDetector"]
-position = Vector2(-366, 0)
-shape = SubResource("RectangleShape2D_drt4o")
-
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit7"]
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="DoorBit"]
 shape = SubResource("RectangleShape2D_mf3b7")
 
-[node name="Sprite2D" type="Sprite2D" parent="DoorBit7"]
-position = Vector2(166, 599)
+[node name="Sprite2D2" type="Sprite2D" parent="DoorBit"]
+texture = SubResource("GradientTexture2D_cm7bc")
+
+[node name="DoorBit2" parent="." instance=ExtResource("6_drt4o")]
+orientation = 2
+
+[node name="Node2" type="Node" parent="DoorBit2" node_paths=PackedStringArray("switches")]
+script = ExtResource("5_6bylj")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": null,
+"exited_range_right": null,
+"interact_left": null,
+"interact_right": null
+}
+
+[node name="Open2" type="Node" parent="DoorBit2" node_paths=PackedStringArray("switches")]
+script = ExtResource("4_w8fs8")
+switches = {
+"entered_range_left": null,
+"entered_range_right": null,
+"exited_range_left": null,
+"exited_range_right": null,
+"interact_left": null,
+"interact_right": null
+}
+
+[node name="PlayerDetector2" type="Area2D" parent="DoorBit2"]
+process_mode = 1
+collision_layer = 8
+collision_mask = 2
+
+[node name="CollisionShape2D2" type="CollisionShape2D" parent="DoorBit2"]
+shape = SubResource("RectangleShape2D_mf3b7")
+
+[node name="Sprite2D2" type="Sprite2D" parent="DoorBit2"]
 texture = SubResource("GradientTexture2D_cm7bc")
