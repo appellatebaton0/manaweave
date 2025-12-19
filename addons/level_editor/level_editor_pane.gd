@@ -1,64 +1,81 @@
 @tool
-extends PanelContainer
+extends Panel
 
 var plugin:EditorPlugin
 
 var current:RoomBit
 
-@onready var selection_display:Label = $MarginContainer/VBoxContainer/Panel/ScrollContainer/VBoxContainer/CurrentNode
+@onready var selection_display := $ScrollContainer/VBoxContainer/Selection
+@onready var entry_box := $ScrollContainer/VBoxContainer/Entries
 
 @onready var door_scene = preload("res://scenes/door.tscn")
+@onready var entry_scene = preload("door_entry.tscn")
 
-func _update_node() -> bool:
-	print("updating")
-	if plugin == null: return false
+@onready var selection := plugin.get_editor_interface().get_selection()
+
+var door_entries:Array[Panel]
+
+func _ready() -> void:
+	selection.selection_changed.connect(_on_selection_change)
+
+func _on_selection_change() -> void:
+	if plugin == null: return
 	
-	for node in plugin.get_editor_interface().get_selection().get_selected_nodes():
+	for node in selection.get_selected_nodes():
 		if node is RoomBit:
 			current = node
+			return
 	
-	print("updated to ", current)
 	selection_display.text = str(current) if current != null else "None"
 	
-	return true
-
-
-func recursive_own_children_to_scene(node):
-	node.set_owner(current)
-	for child in node.get_children():
-		recursive_own_children_to_scene(child)
-
+	# Update the door entries.
+	
+	for entry in door_entries: entry.queue_free()
+	door_entries.clear()
+	
+	if current == null: return
+	
+	for door in current.get_doors(): add_door_entry(door)
 
 func _on_door_adder_pressed() -> void:
 	if current == null: return
 	
+	# Add the door to the current.
+	
 	var new = door_scene.instantiate()
 	
 	current.add_child(new)
-	new.owner = current
 	
 	new.name = "DoorBit"
 	
-	recursive_own_children_to_scene(new)
-	new.filename = ""
+	localize(new)
+	
+	# Add a door_entry to the pane.
+	add_door_entry(new)
 
+## Updates the data of the room to be correct
 func _update_room_data() -> void:
 	if current == null: return
 	
-	var undo_redo := UndoRedo.new()
+	var undo_redo := plugin.get_undo_redo()
 	
-	
-	undo_redo.create_action("Move the node")
-	undo_redo.add_do_method(_update_room_data_do)
-	undo_redo.add_undo_method(_update_room_data_undo)
-	# undo_redo.add_do_property(node, "position", Vector2(100, 100))
-	# undo_redo.add_undo_property(node, "position", node.position)
+	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
+	undo_redo.create_action("Update Room Data")
+	undo_redo.add_do_property(current, "data", {
+		"doors": ["Success! x2"]
+	})
 	undo_redo.commit_action()
-func _update_room_data_do() -> void:
-	current.data = {
-		"test": "e"
-	}
-	pass
-func _update_room_data_undo() -> void:
-	current.data = {}
-	pass
+
+# Lets a node keep all its children when .filename is set to nothing.
+func localize(node):
+	node.set_owner(current)
+	for child in node.get_children():
+		localize(child)
+
+func add_door_entry(door:DoorBit):
+	var new_entry = entry_scene.instantiate()
+		
+	entry_box.add_child(new_entry)
+	
+	print("set ", new_entry, ".", new_entry.door, " to ", door)
+	new_entry.door = door

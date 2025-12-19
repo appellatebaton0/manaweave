@@ -1,8 +1,7 @@
-[gd_scene load_steps=6 format=4 uid="uid://btxr1764rq2if"]
+[gd_scene load_steps=5 format=4 uid="uid://btxr1764rq2if"]
 
 [ext_resource type="Texture2D" uid="uid://dbcpt3shyumio" path="res://assets/resources/tileset.tres" id="1_g03ns"]
 [ext_resource type="Script" uid="uid://bfu5x2xplye6c" path="res://scripts/bits/room.gd" id="2_fhqhp"]
-[ext_resource type="PackedScene" uid="uid://bnfhvj40djonp" path="res://scenes/door.tscn" id="3_if1ew"]
 
 [sub_resource type="TileSetAtlasSource" id="TileSetAtlasSource_tefeu"]
 texture = ExtResource("1_g03ns")
@@ -164,6 +163,3 @@ script = ExtResource("2_fhqhp")
 data = {
 "test": "e"
 }
-
-[node name="DoorBit" parent="." instance=ExtResource("3_if1ew")]
-position = Vector2(512, 12160)
