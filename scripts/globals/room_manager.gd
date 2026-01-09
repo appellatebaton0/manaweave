@@ -39,7 +39,7 @@ func shuffle():
 		print("from ", room, " -> ", room.data)
 		print(room.data["doors"])
 	
-	return 
+	#return
 	var required := rooms.duplicate()
 	var filler := filler_rooms.duplicate()
 	
@@ -48,6 +48,8 @@ func shuffle():
 	# Place the crossroad
 	var crossroad:RoomBit = required[0]
 	## NOTE: ^?
+	
+	print("req length: ", required)
 	
 	var placed:Array[RoomBit] = [crossroad]
 	while len(required) != 0: # As long as there are still rooms to place.

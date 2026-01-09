@@ -59,6 +59,8 @@ func _on_door_adder_pressed() -> void:
 func _update_room_data() -> void:
 	if current == null: return
 	
+	current.doors = get_current_doors()
+	
 	var new_data:Dictionary = {
 		"doors": []
 	}
