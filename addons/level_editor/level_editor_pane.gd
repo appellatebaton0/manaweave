@@ -47,7 +47,7 @@ func _update_interface():
 		selection_display.text = current_room.name
 		
 		# Add the new door entries.
-		for door in get_current_room_doors(): add_door_entry(door)
+		for door in current_room.get_doors(): add_door_entry(door)
 
 func _on_door_adder_pressed() -> void:
 	if current_room == null: return
@@ -64,30 +64,24 @@ func _on_door_adder_pressed() -> void:
 	
 	# Add a door_entry to the pane.
 	add_door_entry(new)
+	
+	_update_room_data()
 
 ## Updates the data of the room to be correct
 func _update_room_data() -> void:
 	if current_room == null: return
+	print("[Level Editor]: Saving...")
 	
-	current_room.doors = get_current_room_doors()
+	# Update the doors.
+	unre_action("Update Room Doors", current_room, "doors", get_current_room_doors(), current_room.doors)
 	
-	var new_data:Dictionary = {
-		"doors": []
-	}
+	# Update the cfg file.
+	var save_error = current_room.update_config()
 	
-	# Append the data from doors
-	for door in get_current_room_doors():
-		new_data["doors"].append({
-			"path": door.room_path,
-			"orientation": door.orientation
-		})
-	
-	# Append the data from the room itself
-	new_data["position"] = current_room.global_position
-	
-	unre_action("Update Room Data", current_room, "data", new_data)
-	
-	print("Updated ", current_room, "'s data to ", current_room.data)
+	if save_error:
+		push_error("[Level Editor]: Failed Config Save. Error Code: ", save_error)
+	else:
+		print("[Level Editor]: Room Config Saved to ", current_room.config_path)
 
 # Lets a node keep all its children when .filename is set to nothing.
 func localize(node):
@@ -115,10 +109,21 @@ func get_current_room_doors() -> Array[DoorBit]:
 	return response
 
 # Perform a change via the EditorUndoRedoManager
-func unre_action(action_name:String, target:Object, property:String, new_value:Variant):
+func unre_action(action_name:String, target:Object, property:StringName, new_value:Variant, old_value:Variant):
 	var undo_redo := plugin.get_undo_redo()
 	
 	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
 	undo_redo.create_action(action_name)
 	undo_redo.add_do_property(target, property, new_value)
+	undo_redo.add_undo_property(target, property, old_value)
 	undo_redo.commit_action()
+
+func unre_method(action_name:String, target:Object, method:StringName, ...args:Array):
+	var undo_redo := plugin.get_undo_redo()
+	
+	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
+	undo_redo.create_action(action_name)
+	undo_redo.add_do_method(target, method, args)
+	undo_redo.commit_action()
+	
+	pass
