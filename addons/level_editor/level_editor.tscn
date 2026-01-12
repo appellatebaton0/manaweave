@@ -12,8 +12,12 @@ bg_color = Color(0.41981313, 0.41981313, 0.4198131, 0.3254902)
 bg_color = Color(0.099985994, 0.099985994, 0.099985994, 0.3254902)
 
 [node name="LevelEditor" type="Panel"]
-offset_right = 662.0
-offset_bottom = 926.0
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+offset_right = -749.0
+grow_horizontal = 2
+grow_vertical = 2
 script = ExtResource("1_owc6j")
 
 [node name="ScrollContainer" type="ScrollContainer" parent="."]
@@ -78,5 +82,24 @@ theme_override_constants/separation = 8
 layout_mode = 2
 size_flags_vertical = 3
 
+[node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/VBoxContainer"]
+layout_mode = 2
+theme_override_constants/margin_left = 3
+theme_override_constants/margin_top = 3
+theme_override_constants/margin_right = 3
+theme_override_constants/margin_bottom = 3
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2"]
+layout_mode = 2
+text = "Check Global Doors: 0000 - ✓"
+
+[node name="Button" type="Button" parent="ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2"]
+layout_mode = 2
+text = "Check"
+
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer/DoorAdder" to="." method="_on_door_adder_pressed"]
 [connection signal="pressed" from="ScrollContainer/VBoxContainer/MarginContainer/HBoxContainer/Update" to="." method="_update_room_data"]
+[connection signal="pressed" from="ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2/Button" to="." method="_on_check_door_count"]

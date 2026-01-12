@@ -7,6 +7,7 @@ var current_room:RoomBit
 
 @onready var selection_display := $ScrollContainer/VBoxContainer/HBoxContainer/Selection
 @onready var entry_box := $ScrollContainer/VBoxContainer/Entries
+@onready var door_counter := $ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2/Label
 
 @onready var door_scene = preload("res://scenes/door.tscn")
 @onready var entry_scene = preload("door_entry.tscn")
@@ -127,3 +128,55 @@ func unre_method(action_name:String, target:Object, method:StringName, ...args:A
 	undo_redo.commit_action()
 	
 	pass
+
+# Run a count of the doors across all saved doors, to make it easier to ensure there's an even amount.
+func _on_check_door_count() -> void:
+	
+	print("[Level Editor]: Running Door Count Check...")
+	
+	var door_count := 0
+	# Load... all the level cfgs.
+	var filenames:Array[StringName]
+	
+	var dir = DirAccess.open("res://assets/configs")
+	if dir:
+		dir.list_dir_begin()
+		var file_name = dir.get_next()
+		while file_name != "":
+			if not dir.current_is_dir():
+				filenames.append(file_name)
+			file_name = dir.get_next()
+	else:
+		print("[Level Editor]: An error occurred when trying to access the path.")
+	
+	for filename in filenames:
+		var this = ConfigFile.new()
+		this.load("res://assets/configs/" + filename)
+		
+		door_count += len(this.get_value("world", "door_connections"))
+	
+	print("[Level Editor]: Result: ", door_count, " Doors Globally.")
+	
+	# Update the label of the counter.
+	var new_text = "Check Global Doors: "
+	
+	# Placeholder 0s
+	for i in range(4 - get_places(door_count)):
+		new_text += "0"
+	new_text += str(door_count)
+	
+	# Mark for if it's even.
+	new_text += " ✗" if door_count % 2 else " ✓"
+	
+	# Update.
+	door_counter.text = new_text
+
+func get_places(num):
+	if num == 0: return 1
+
+	var places = 0
+	while abs(num) >= 1:
+		num /= 10;
+		places += 1;
+
+	return places
