@@ -24,6 +24,7 @@ class Room:
 		room_filename = config.get_value("world", "room_filename")
 	
 	class Door:
+		
 		var connected_to:Room # The room this door is connected to.
 		var connection_path:StringName # The path of the room this door is connected to. The same as connected_to.room_filename.
 		var owned_by:Room # The owner of the room
@@ -32,9 +33,20 @@ class Room:
 			connection_path = connection
 			owned_by = belongs_to
 		
-		func connect_to(room:Room):
-			connected_to = room
-			connection_path = room.room_filename
+		## Connect this door to another.
+		func connect_to(door:Door, override_check:bool = false, connect_other:bool = true) -> bool:
+			if (door.connected_to or connected_to) and not override_check: return false
+			
+			connected_to = door.owned_by
+			connection_path = door.owned_by.room_filename
+			
+			if connect_other:
+				door.connect_to(self, true, false)
+			
+			return true
+		
+		## The set of doors this door is a part of.
+		func doorset() -> Array[Door]: return owned_by.doors
 
 # An array of all the loaded rooms.
 var rooms:Array[Room]
@@ -94,7 +106,10 @@ func shuffle():
 	## Loop (Assumes no 1-doors)
 	for i in range(len(rooms)):
 		# Connect every door to its next, and the last to the first.
-		link_doors(rooms[i], 0, rooms[0 if i == len(rooms) - 1 else i + 1], 1)
+		var doorA = rooms[i].doors[0]
+		var doorB = rooms[0 if i == len(rooms) - 1 else i + 1].doors[1] # The ternary makes the last go to the first.
+		
+		doorA.connect_to(doorB)
 	
 	## Resolve (Connect all the rest of the doors).
 	var not_done:Array[Room.Door]
@@ -111,7 +126,7 @@ func shuffle():
 		if door.connected_to: continue
 		find_connection_for(door, score_sort(door, not_done))
 
-# Returns the room array, sorted against [to] according to score_against(), low to high.
+# Returns the room array, sorted against [to] according to score_against(), low to high. (merge sort :D)
 func score_sort(to:Room.Door, arr:Array) -> Array:
 	var array:Array[Room.Door]
 	
@@ -195,18 +210,9 @@ func find_connection_for(doorA:Room.Door, from:Array) -> Array[Room.Door]:
 		# Ignore self & doors in the same room.
 		if doorB.owned_by == doorA.owned_by: continue 
 		
-		if link_doors(doorA.owned_by.node, doorA.owned_by.doors.find(doorA), doorB.owned_by.node, doorB.owned_by.doors.find(doorB)):
+		if doorA.connect_to(doorB):
 			_from.erase(doorA)
 			_from.erase(doorB)
 			return _from
 	
 	return []
-
-# Connect two doors together, if possible.
-func link_doors(roomA:Room, doorA:int, roomB:Room, doorB:int) -> bool:
-	if roomA.doors[doorA].connected_to or roomB.doors[doorB].connected_to: return false
-	
-	roomA.doors[doorA].connect_to(roomB)
-	roomB.doors[doorB].connect_to(roomA)
-	
-	return true
