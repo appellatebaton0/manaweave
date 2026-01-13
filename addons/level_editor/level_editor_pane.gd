@@ -77,7 +77,7 @@ func _update_room_data() -> void:
 	unre_action("Update Room Doors", current_room, "doors", get_current_room_doors(), current_room.doors)
 	
 	# Update the cfg file.
-	var save_error = current_room.update_config()
+	var save_error = current_room.save_config()
 	
 	if save_error:
 		push_error("[Level Editor]: Failed Config Save. Error Code: ", save_error)

@@ -24,14 +24,14 @@ func save_config() -> Error:
 		var current_filename = str(scene_file_path.replace(ROOM_SAVE_PATH, "").replace(".tscn", ""))
 		config_path = CONFIG_SAVE_PATH + current_filename + ".cfg"
 	# If it does, load the existing data from it.
-	else: config.load(config_path)
+	else: cfg.load(config_path)
 	
 	# Update the room filename
 	cfg.set_value("world", "room_filename", scene_file_path)
 	
 	# Update (clear) the door_connections.
-	var door_connections:Array[StringName]
-	for door in get_doors(): door_connections.append(door.connected_to)
+	var door_connections:Array[Dictionary]
+	for door in get_doors(): door_connections.append({"connected_path": door.connected_path, "connected_index": door.connected_index})
 	
 	cfg.set_value("world", "door_connections", door_connections)
 	

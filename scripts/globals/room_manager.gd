@@ -5,82 +5,67 @@ const ROOM_PATH = "res://scenes/rooms/" # Where the rooms' scenes are stored
 
 # A class version of a room's "world" config scene.
 class Room:
-	var doors:Array[Door]
-	var room_filename:StringName
+	var filename:StringName # The path to the room's scene.
+	var doors:Array[Door] # The doors this room has.
 	
-	func _init(from_file:StringName):
-		var config = ConfigFile.new()
+	var _config:ConfigFile # The real data.
+	
+	## Create the Room
+	func _init(from:StringName):
+		_config = ConfigFile.new()
 		
-		var error := config.load(from_file)
-		
-		# Return preemptively if something went wrong.
-		if error: 
+		# Load config, return if error.
+		if _config.load(from): 
 			free()
 			return
 		
-		# Set the doors and filename up.
-		for connection in config.get_value("world", "door_connections"):
-			doors.append(Door.new(connection, self))
-		room_filename = config.get_value("world", "room_filename")
+		filename = _config.get_value("world", "room_filename")
 	
-	# Create a node instance of the room.
-	func create() -> RoomBit:
-		save_as_config()
-		
-		var new:RoomBit = load(room_filename).instantiate()
-		
-		new.load_config()
-		
-		return new
+	## Create the doors and hook them up to the other rooms based on the config.
+	func load_doors(from:Dictionary[Room, StringName]):
+		for dict in _config.get_value("world", "door_connections"): 
+			doors.append(Door.new(self, dict, from)) 
 	
-	# Saves the room back into its config file.
-	func save_as_config() -> Error:
-		
-		var config_path = CONFIG_PATH + room_filename.replace(ROOM_PATH, "").replace(".tscn", ".cfg")
-		var config = ConfigFile.new()
-		config.load(config_path)
-		
-		var door_connections:Array[StringName]
-		
-		for door in doors: door_connections.append(door.connection_path)
-		
-		config.set_value("world", "door_connections", door_connections)
-		
-		return config.save(config_path)
-
-	
-	# A class structure for the DoorBits.
 	class Door:
+		var connected_index:int # The index of the door this door connects to, in its owner (connected_to)
+		var connected_to:Room # The room this door connects to.
+		var owned_by:Room # The room this door is in.
 		
-		var connected_to:Door # The door this door is connected to.
-		var connection_path:StringName # The path of the room this door is connected to. The same as connected_to.owned_by.room_filename.
-		var owned_by:Room # The owner of the room
-		
-		func _init(connection:StringName, belongs_to:Room) -> void:
-			connection_path = connection
-			owned_by = belongs_to
+		## Create a new door with a config entry and a dict of all the rooms.
+		func _init(belongs_to:Room, from:Dictionary, with:Dictionary[Room, StringName]):
+			owned_by = belongs_to # Transfer over the creator.
+			
+			connected_to = with.find_key(from["connected_path"]) # Turn the path into the room.
+			connected_index = from["connected_index"] # Convert the index.
 		
 		## Connect this door to another.
-		func connect_to(door:Door, override_check := false, connect_other := true) -> bool:
-			if (door.connected_to or connected_to) and not override_check: return false
+		func link(door:Door, recur := true) -> bool:
+			if connected_to or door.connected_to: return false # Cancel if there's already a connection.
 			
-			connected_to = door
-			connection_path = door.owned_by.room_filename
+			if recur: door.link(self, false) # Connect the other side.
 			
-			if connect_other:
-				door.connect_to(self, true, false)
+			# Connect.
+			connected_to = door.owned_by
+			connected_index = door.get_index()
 			
 			return true
 		
-		func disconnect_door(disconnect_other := true):
+		## Disconnect this door.
+		func unlink(recur := true) -> bool:
 			
-			if disconnect_other: connected_to.disconnect_door(false)
+			if not connected_to: return false
+			
+			if recur: get_target().unlink(false) # Disconnect the other side.
 			
 			connected_to = null
-			connection_path = ""
+			connected_index = -1
+			
+			return true
 		
-		## The set of doors this door is a part of.
-		func doorset() -> Array[Door]: return owned_by.doors
+		## Get the position of this door in its owner's array.
+		func get_index() -> int: return owned_by.doors.find(self)
+		## Get the door this door is connected to.
+		func get_target() -> Door: return connected_to.doors[connected_index]
 
 # An array of all the loaded rooms.
 var rooms:Array[Room]
@@ -97,64 +82,53 @@ func _ready() -> void:
 	shuffle()
 	
 	# Save the room's connections back into their configs.
-	for room in rooms: room.save_as_config()
+	# for room in rooms: room.save()
 	
 	# Create a new instance of the first.
-	var _new = rooms[0].create()
+	# var _new = rooms[0].create()
 	
 	# DEBUG.
-	#for room in rooms:
-		#print("- - -")
-		#print("Room ", room.room_filename)
-		#print("-")
-		#for door in room.doors:
-			#print("Door ", door)
-			#print("Connection: ", door.connection_path)
-			#print("-")
+	for room in rooms:
+		print("- - -")
+		print("Room ", room.filename)
+		print("-")
+		for door in room.doors:
+			print("Door ", door)
+			print("Connection: ", door.connected_to.filename)
+			print("-")
 
+## Load all the room configs into Rooms.
 func load_rooms() -> Array[Room]:
-	var response:Array[Room]
-	var room_paths:Dictionary[StringName, Room]
+	var room_paths:Dictionary[Room, StringName]
 	
 	# Load all the level cfgs as rooms.
-	var dir = DirAccess.open(CONFIG_PATH)
-	if dir:
-		dir.list_dir_begin()
-		var file_name = dir.get_next()
-		while file_name != "":
-			if not dir.current_is_dir(): # The current file *is* a file.
-				var new := Room.new(CONFIG_PATH + file_name)
-				# Make sure it exists (The filename was a cfg file.)
-				if new: 
-					response.append(new)
-					room_paths[CONFIG_PATH + file_name] = new
-			file_name = dir.get_next()
-	else:
-		print("[Level Editor]: An error occurred when trying to access the path.")
+	for path in Lib.get_file_paths_at(CONFIG_PATH):
+		var new := Room.new(path)
+		
+		if new:
+			room_paths[new] = path
 	
-	# Resolve any existing connections.
-	# After the doors pass off their connection_path from their room's config,
-	# this updates their connected_to room if it exists.
-	for room in response: for door in room.doors:
-		if door.connection_path and room_paths.has(door.connection_path):
-			door.connected_to = room_paths[door.connection_path]
+	# Load all the doors for each room.
+	for room in room_paths.keys(): if room is Room:
+		room.load_doors(room_paths)
+		print(room.doors)
 	
-	return response
+	return room_paths.keys()
 
 # Shuffles the current room array.
 func shuffle():
 	
 	## Clear the existing connections.
 	
-	for room in rooms: for door in room.doors: door.connected_to
+	for room in rooms: for door in room.doors: door.unlink()
 	
-	## Loop (Assumes no 1-doors)
+	## Loop NOTE: Assumes no 1-doors, so every room must have 2+ doors.
 	for i in range(len(rooms)):
 		# Connect every door to its next, and the last to the first.
 		var doorA = rooms[i].doors[0]
 		var doorB = rooms[0 if i == len(rooms) - 1 else i + 1].doors[1] # The ternary makes the last go to the first.
 		
-		doorA.connect_to(doorB)
+		doorA.link(doorB)
 	
 	## Resolve (Connect all the rest of the doors).
 	var not_done:Array[Room.Door]
@@ -255,9 +229,11 @@ func find_connection_for(doorA:Room.Door, from:Array) -> Array[Room.Door]:
 		# Ignore self & doors in the same room.
 		if doorB.owned_by == doorA.owned_by: continue 
 		
-		if doorA.connect_to(doorB):
+		if doorA.link(doorB):
 			_from.erase(doorA)
 			_from.erase(doorB)
 			return _from
 	
 	return []
+
+## SAVING / LOADING
