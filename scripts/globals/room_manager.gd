@@ -52,8 +52,8 @@ class Room:
 	# A class structure for the DoorBits.
 	class Door:
 		
-		var connected_to:Room # The room this door is connected to.
-		var connection_path:StringName # The path of the room this door is connected to. The same as connected_to.room_filename.
+		var connected_to:Door # The door this door is connected to.
+		var connection_path:StringName # The path of the room this door is connected to. The same as connected_to.owned_by.room_filename.
 		var owned_by:Room # The owner of the room
 		
 		func _init(connection:StringName, belongs_to:Room) -> void:
@@ -61,16 +61,23 @@ class Room:
 			owned_by = belongs_to
 		
 		## Connect this door to another.
-		func connect_to(door:Door, override_check:bool = false, connect_other:bool = true) -> bool:
+		func connect_to(door:Door, override_check := false, connect_other := true) -> bool:
 			if (door.connected_to or connected_to) and not override_check: return false
 			
-			connected_to = door.owned_by
+			connected_to = door
 			connection_path = door.owned_by.room_filename
 			
 			if connect_other:
 				door.connect_to(self, true, false)
 			
 			return true
+		
+		func disconnect_door(disconnect_other := true):
+			
+			if disconnect_other: connected_to.disconnect_door(false)
+			
+			connected_to = null
+			connection_path = ""
 		
 		## The set of doors this door is a part of.
 		func doorset() -> Array[Door]: return owned_by.doors
@@ -93,8 +100,7 @@ func _ready() -> void:
 	for room in rooms: room.save_as_config()
 	
 	# Create a new instance of the first.
-	var new = rooms[0].create()
-	new.load_config()
+	var _new = rooms[0].create()
 	
 	# DEBUG.
 	#for room in rooms:
@@ -137,6 +143,10 @@ func load_rooms() -> Array[Room]:
 
 # Shuffles the current room array.
 func shuffle():
+	
+	## Clear the existing connections.
+	
+	for room in rooms: for door in room.doors: door.connected_to
 	
 	## Loop (Assumes no 1-doors)
 	for i in range(len(rooms)):
