@@ -23,6 +23,33 @@ class Room:
 			doors.append(Door.new(connection, self))
 		room_filename = config.get_value("world", "room_filename")
 	
+	# Create a node instance of the room.
+	func create() -> RoomBit:
+		save_as_config()
+		
+		var new:RoomBit = load(room_filename).instantiate()
+		
+		new.load_config()
+		
+		return new
+	
+	# Saves the room back into its config file.
+	func save_as_config() -> Error:
+		
+		var config_path = CONFIG_PATH + room_filename.replace(ROOM_PATH, "").replace(".tscn", ".cfg")
+		var config = ConfigFile.new()
+		config.load(config_path)
+		
+		var door_connections:Array[StringName]
+		
+		for door in doors: door_connections.append(door.connection_path)
+		
+		config.set_value("world", "door_connections", door_connections)
+		
+		return config.save(config_path)
+
+	
+	# A class structure for the DoorBits.
 	class Door:
 		
 		var connected_to:Room # The room this door is connected to.
@@ -59,17 +86,25 @@ func _ready() -> void:
 	# Load all the rooms.
 	rooms = load_rooms()
 	
+	# Shuffle their connections.
 	shuffle()
 	
+	# Save the room's connections back into their configs.
+	for room in rooms: room.save_as_config()
+	
+	# Create a new instance of the first.
+	var new = rooms[0].create()
+	new.load_config()
+	
 	# DEBUG.
-	for room in rooms:
-		print("- - -")
-		print("Room ", room.room_filename)
-		print("-")
-		for door in room.doors:
-			print("Door ", door)
-			print("Connection: ", door.connection_path)
-			print("-")
+	#for room in rooms:
+		#print("- - -")
+		#print("Room ", room.room_filename)
+		#print("-")
+		#for door in room.doors:
+			#print("Door ", door)
+			#print("Connection: ", door.connection_path)
+			#print("-")
 
 func load_rooms() -> Array[Room]:
 	var response:Array[Room]
