@@ -1,31 +1,28 @@
-[gd_scene load_steps=8 format=3 uid="uid://bnfhvj40djonp"]
+[gd_scene load_steps=7 format=3 uid="uid://bnfhvj40djonp"]
 
 [ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="1_83dcw"]
 [ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="2_la1wf"]
 [ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="3_18pbm"]
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_drt4o"]
-size = Vector2(550, 1024)
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_83dcw"]
+size = Vector2(1280, 1024)
 
-[sub_resource type="RectangleShape2D" id="RectangleShape2D_mf3b7"]
-size = Vector2(256, 1024)
+[sub_resource type="Gradient" id="Gradient_cm7bc"]
 
-[sub_resource type="Gradient" id="Gradient_resf0"]
-
-[sub_resource type="GradientTexture2D" id="GradientTexture2D_cm7bc"]
-gradient = SubResource("Gradient_resf0")
-width = 256
+[sub_resource type="GradientTexture2D" id="GradientTexture2D_la1wf"]
+gradient = SubResource("Gradient_cm7bc")
+width = 1280
 height = 1024
 
-[node name="DoorBit" type="StaticBody2D"]
+[node name="DoorBit" type="Area2D" node_paths=PackedStringArray("initial_state")]
 process_mode = 1
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("1_83dcw")
-orientation = 3
+initial_state = NodePath("OpenDoorState")
 isolated = true
 
-[node name="Node" type="Node" parent="." node_paths=PackedStringArray("switches")]
+[node name="ClosedDoorStatt" type="Node" parent="." node_paths=PackedStringArray("switches")]
 script = ExtResource("2_la1wf")
 switches = {
 "entered_range_left": null,
@@ -36,7 +33,7 @@ switches = {
 "interact_right": null
 }
 
-[node name="Open" type="Node" parent="." node_paths=PackedStringArray("switches")]
+[node name="OpenDoorState" type="Node" parent="." node_paths=PackedStringArray("switches")]
 script = ExtResource("3_18pbm")
 switches = {
 "entered_range_left": null,
@@ -47,21 +44,8 @@ switches = {
 "interact_right": null
 }
 
-[node name="PlayerDetector" type="Area2D" parent="."]
-process_mode = 1
-collision_layer = 8
-collision_mask = 2
-
-[node name="CollisionShape2D2" type="CollisionShape2D" parent="PlayerDetector"]
-position = Vector2(384, 0)
-shape = SubResource("RectangleShape2D_drt4o")
-
-[node name="CollisionShape2D3" type="CollisionShape2D" parent="PlayerDetector"]
-position = Vector2(-366, 0)
-shape = SubResource("RectangleShape2D_drt4o")
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("RectangleShape2D_mf3b7")
+shape = SubResource("RectangleShape2D_83dcw")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
-texture = SubResource("GradientTexture2D_cm7bc")
+texture = SubResource("GradientTexture2D_la1wf")

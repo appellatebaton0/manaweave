@@ -28,8 +28,11 @@
 func _on_active() -> void:   pass
 func _on_inactive() -> void: pass
 
-func _on_user_entered(_user:Bot, _user_direction:float) -> void: pass
-func _on_user_exited(_user:Bot, _user_direction:float) -> void: pass
+func _on_user_entered(_user:Bot) -> void: pass
+func _on_user_exited(_user:Bot) -> void: pass
 
 func _active(_delta:float) -> void: pass
 func _inactive(_delta:float) -> void: pass
+
+func _phys_active(_delta:float) -> void: pass
+func _phys_inactive(_delta:float) -> void: pass

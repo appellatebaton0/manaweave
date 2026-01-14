@@ -21,10 +21,28 @@ class Room:
 		
 		filename = _config.get_value("world", "room_filename")
 	
+	## Create a RoomBit instance from this room.
+	func create() -> RoomBit: return load(filename).instantiate()
+	
 	## Create the doors and hook them up to the other rooms based on the config.
 	func load_doors(from:Dictionary[Room, StringName]):
 		for dict in _config.get_value("world", "door_connections"): 
 			doors.append(Door.new(self, dict, from)) 
+	
+	## Save back into the config file.
+	func save() -> Error:
+		
+		# Update the door connections
+		
+		var door_connections:Array[Dictionary]
+		for door in doors: door_connections.append({"connected_path": door.connected_to.filename, "connected_index": door.connected_index})
+		
+		_config.set_value("world", "door_connections", door_connections)
+		
+		# Save
+		
+		var config_path = CONFIG_PATH + filename.replace(ROOM_PATH, "").replace(".tscn", ".cfg")
+		return _config.save(config_path)
 	
 	class Door:
 		var connected_index:int # The index of the door this door connects to, in its owner (connected_to)
@@ -35,8 +53,10 @@ class Room:
 		func _init(belongs_to:Room, from:Dictionary, with:Dictionary[Room, StringName]):
 			owned_by = belongs_to # Transfer over the creator.
 			
+			print(from)
+			
 			connected_to = with.find_key(from["connected_path"]) # Turn the path into the room.
-			connected_index = from["connected_index"] # Convert the index.
+			connected_index = from["connected_index"] if from["connected_index"] else -1 # Convert the index.
 		
 		## Connect this door to another.
 		func link(door:Door, recur := true) -> bool:
@@ -82,10 +102,11 @@ func _ready() -> void:
 	shuffle()
 	
 	# Save the room's connections back into their configs.
-	# for room in rooms: room.save()
+	for room in rooms: room.save()
 	
 	# Create a new instance of the first.
-	# var _new = rooms[0].create()
+	var new = rooms[0].create()
+	get_tree().get_first_node_in_group("RoomParent").add_child(new)
 	
 	# DEBUG.
 	for room in rooms:

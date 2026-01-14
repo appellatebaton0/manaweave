@@ -45,7 +45,7 @@ func save_config() -> Error:
 	# Save the config.
 	return cfg.save(config_path)
 func load_config() -> Error:
-	var cfg = ConfigFile.new()
+	var _cfg = ConfigFile.new()
 	
 	# Parse the doors' data from the config.
 	
