@@ -1,9 +1,17 @@
 class_name DoorBit extends Bit
 ## The basis for a room's doors.
 
-## The path of the room the door is connected to.
-@export_storage var connected_path:String
-@export_storage var connected_index:int
+## Live getters for the door's world data. Good for making sure they're in-date.
+func get_connected_path() -> StringName:
+	var parent = get_parent()
+	if parent is RoomBit: if parent.config: 
+		return parent.config.get_value("world", "door_connections")[parent.doors.find(self)]["connected_path"]
+	return &""
+func get_connected_index():
+	var parent = get_parent()
+	if parent is RoomBit: if parent.config: 
+		return parent.config.get_value("world", "door_connections")[parent.doors.find(self)]["connected_index"]
+	return 0
 
 ## Everything relating to the current state of the door.
 @export var initial_state:DoorStateBit
@@ -13,17 +21,18 @@ var current_state:DoorStateBit
 func get_states() -> Array[DoorStateBit]:
 	var response:Array[DoorStateBit]
 	
-	for child in get_children(): if child is DoorStateBit: response.append(child)
+	for child in get_children(): if child is DoorStateBit: 
+		response.append(child)
+		child.door = self
 	
 	return response
 
-# Changes the state to a new state, and runs the appropriate functions.
-func change_state(to:DoorStateBit):
-	if current_state: current_state._on_inactive()
-	
-	current_state = to
-	
-	if current_state: current_state._on_active()
+@onready var area := get_area()
+func get_area() -> Area2D:
+	var me = self
+	return me
+
+func _init() -> void: print("CREATED DOOR ", self, " PARENT? ", get_parent())
 
 func _ready() -> void:
 	# Set up the current state.
@@ -31,24 +40,80 @@ func _ready() -> void:
 	else: change_state(states[0] if len(states) > 0 else null) # Otherwise first state found, otherwise null.
 	
 	# Connect the body signals.
-	var area = self
-	if area is Area2D:
-		area.body_entered.connect(_on_body_entered)
-		area.body_exited.connect(_on_body_exited)
+	area.body_entered.connect(_on_body_entered)
+	area.body_exited.connect(_on_body_exited)
 	
+	print(self , "RDW", area.global_position)
+
 ## Call appropriate active functions for process & physics_process.
 func _process(delta: float) -> void:
 	for state in states:
 		if state == current_state: state._active(delta)
 		else: state._inactive(delta)
+	
+	# Call the appropriate interaction method if necessary.
+	# This is here rather than in each door's "_active" to make it easier to change later.
+	if Input.is_action_just_pressed("Interact") and area.get_overlapping_bodies(): 
+		current_state._on_user_interact()
+		try_switch("interact")
 func _physics_process(delta: float) -> void:
 	for state in states:
 		if state == current_state: state._phys_active(delta)
 		else: state._phys_inactive(delta)
 
 ## Call appropriate functions when the user enteres the door's range.
-func _on_body_entered(body: Node2D) -> void:_on_body(body, "_on_user_entered")
-func _on_body_exited(body: Node2D) -> void: _on_body(body, "_on_user_exited")
-func _on_body(user, method:StringName):
+func _on_body_entered(body: Node2D) -> void:_on_body(body, "_on_user_entered", "entered_range")
+func _on_body_exited(body: Node2D) -> void: _on_body(body, "_on_user_exited",  "exited_range")
+func _on_body(user, method:StringName, switch_call:StringName):
 	if user is Bit: user = user.bot
-	if user is Bot: current_state.call(method, user)
+	if user is Bot: 
+		current_state.call(method, user)
+		try_switch(switch_call)
+
+## Tries to switch the state to the current state's designation for a specific action.
+## IE, action = "interact" will try to switch the state to what the current state says
+## it should when the user interacts.
+func try_switch(action:StringName) -> bool:
+	var next_state = current_state.switches[action]
+	if next_state: 
+		change_state(next_state)
+		return true
+	return false
+
+## Changes the state to a new state, and runs the appropriate functions.
+func change_state(to:DoorStateBit):
+	if current_state: current_state._on_inactive()
+	
+	current_state = to
+	
+	if current_state: current_state._on_active()
+
+## Switch rooms to this door's room.
+func pass_through() -> void:
+	# Make the new room.
+	print("MADE NEW ROOM")
+	var new:RoomBit = load(get_connected_path()).instantiate()
+	
+	print("ADD TO TREE")
+	get_tree().get_first_node_in_group("RoomParent").add_child(new)
+	
+	#var connected_door:DoorBit = new.doors[get_connected_index()]
+	#connected_door.lazy_transform()
+	#print("door: ", connected_door, " t1 ", connected_door.door_position, " t2 ", connected_door.get_area().position)
+	
+	#while true:
+		#await connected_door.ready
+		#
+		#print("minus ", connected_door.area.global_position)
+		#
+		#new.global_position = self.global_position - connected_door.area.global_position
+		#
+	get_parent().queue_free()
+		#break
+	
+	pass
+func lazy_transform() -> void:
+	
+	print(self, " LT: ", self.global_position)
+	if is_node_ready(): print("LT! ", area.global_position)
+	pass

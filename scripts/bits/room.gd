@@ -6,14 +6,19 @@ const CONFIG_SAVE_PATH := "res://assets/configs/"
 const ROOM_SAVE_PATH := "res://scenes/rooms/"
 
 @export_storage var config_path
+# Store the doors' positions both for access later and as a count of how many doors exist.
+# Saves to the file.
+@export_storage var doors:Array[Vector2] 
 
-@export_storage var doors:Array[DoorBit]
+func _init() -> void: print("INIT W/ ", doors)
 
 var config:ConfigFile
 func _ready() -> void:
+	print("READY W/ ", doors)
 	if not Engine.is_editor_hint():
 		config = ConfigFile.new()
 		if config.load(config_path): push_warning("Failed to load the config file at path ", config_path)
+		
 
 # Updates the config for this room to reflect its state.
 func save_config() -> Error:
@@ -31,7 +36,7 @@ func save_config() -> Error:
 	
 	# Update (clear) the door_connections.
 	var door_connections:Array[Dictionary]
-	for door in get_doors(): door_connections.append({"connected_path": door.connected_path, "connected_index": door.connected_index})
+	for door in get_doors(): door_connections.append({"connected_path": "", "connected_index": -1})
 	
 	cfg.set_value("world", "door_connections", door_connections)
 	

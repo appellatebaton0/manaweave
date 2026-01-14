@@ -22,7 +22,9 @@ class Room:
 		filename = _config.get_value("world", "room_filename")
 	
 	## Create a RoomBit instance from this room.
-	func create() -> RoomBit: return load(filename).instantiate()
+	func create() -> RoomBit: 
+		print(0)
+		return load(filename).instantiate()
 	
 	## Create the doors and hook them up to the other rooms based on the config.
 	func load_doors(from:Dictionary[Room, StringName]):
@@ -53,7 +55,7 @@ class Room:
 		func _init(belongs_to:Room, from:Dictionary, with:Dictionary[Room, StringName]):
 			owned_by = belongs_to # Transfer over the creator.
 			
-			print(from)
+			print("new_door", from)
 			
 			connected_to = with.find_key(from["connected_path"]) # Turn the path into the room.
 			connected_index = from["connected_index"] if from["connected_index"] else -1 # Convert the index.
@@ -132,11 +134,11 @@ func load_rooms() -> Array[Room]:
 	# Load all the doors for each room.
 	for room in room_paths.keys(): if room is Room:
 		room.load_doors(room_paths)
-		print(room.doors)
+		print("doors ", room.doors)
 	
 	return room_paths.keys()
 
-# Shuffles the current room array.
+## Shuffles all the connections of the rooms' doors.
 func shuffle():
 	
 	## Clear the existing connections.
@@ -164,9 +166,9 @@ func shuffle():
 	not_done.shuffle() 
 	for door in not_done:
 		if door.connected_to: continue
-		find_connection_for(door, score_sort(door, not_done))
+		if not find_connection_for(door, score_sort(door, not_done)): push_warning("Failed to connect ", door)
 
-# Returns the room array, sorted against [to] according to score_against(), low to high. (merge sort :D)
+## Returns the room array, sorted against [to] according to score_against(), low to high. (merge sort :D)
 func score_sort(to:Room.Door, arr:Array) -> Array:
 	var array:Array[Room.Door]
 	
@@ -221,7 +223,7 @@ func score_sort(to:Room.Door, arr:Array) -> Array:
 	
 	return response
 
-# Score a target door based on some qualities in relation to another door, and return that score.
+## Score a target door based on some qualities in relation to another door, and return that score.
 func score_against(target:Room.Door, against:Room.Door) -> float:
 	
 	var score := 0
@@ -234,27 +236,12 @@ func score_against(target:Room.Door, against:Room.Door) -> float:
 	
 	return score
 
-## CONNECTING DOORS
-
-func find_connection_for(doorA:Room.Door, from:Array) -> Array[Room.Door]:	
-	var _from:Array[Room.Door]
-	
-	# Parse the input into doors.
-	for item in from:
-		if item is Room.Door: _from.append(item)
-		elif item is Room: _from.append_array(item.doors)
-	
+## Find a connection
+func find_connection_for(doorA:Room.Door, from:Array) -> bool:
 	# Find a door to connect to.
-	for checking in range(len(_from)):
-		var doorB:Room.Door = _from[checking]
+	for doorB in from:
 		# Ignore self & doors in the same room.
 		if doorB.owned_by == doorA.owned_by: continue 
-		
-		if doorA.link(doorB):
-			_from.erase(doorA)
-			_from.erase(doorB)
-			return _from
-	
-	return []
-
-## SAVING / LOADING
+		if doorA.link(doorB): return true
+	# Failed to find a connection.
+	return false

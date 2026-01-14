@@ -102,10 +102,10 @@ func add_door_entry(door:DoorBit):
 	
 	door_entries.append(new_entry)
 
-func get_current_room_doors() -> Array[DoorBit]:
-	var response:Array[DoorBit]
+func get_current_room_doors() -> Array[Vector2]:
+	var response:Array[Vector2]
 	
-	for child in current_room.get_children(): if child is DoorBit: response.append(child)
+	for child in current_room.get_children(): if child is DoorBit: response.append(child.area.position)
 	
 	return response
 

@@ -1,8 +1,7 @@
-[gd_scene load_steps=12 format=4 uid="uid://btxr1764rq2if"]
+[gd_scene load_steps=11 format=4 uid="uid://btxr1764rq2if"]
 
 [ext_resource type="Texture2D" uid="uid://dbcpt3shyumio" path="res://assets/resources/tileset.tres" id="1_g03ns"]
 [ext_resource type="Script" uid="uid://bfu5x2xplye6c" path="res://scripts/bits/room.gd" id="2_fhqhp"]
-[ext_resource type="PackedScene" uid="uid://bnfhvj40djonp" path="res://scenes/door.tscn" id="3_fhqhp"]
 [ext_resource type="Script" uid="uid://cesxagj8eemed" path="res://scripts/bits/door/door.gd" id="4_ny388"]
 [ext_resource type="Script" uid="uid://db88j33k5lkgt" path="res://scripts/bits/door/closed.gd" id="5_myw7h"]
 [ext_resource type="Script" uid="uid://dflje4dl50f3m" path="res://scripts/bits/door/open.gd" id="6_61adu"]
@@ -175,57 +174,67 @@ tile_map_data = PackedByteArray("AAAAAAAAAQABAAAAAwAAAAEAAQAAAAAAAwAAAAIAAQAAAAA
 tile_set = SubResource("TileSet_o6xl0")
 script = ExtResource("2_fhqhp")
 config_path = "res://assets/configs/testroom2.cfg"
-doors = Array[ExtResource("4_ny388")]([Object(Area2D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":1,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"position":Vector2(2782, 4222),"rotation":0.0,"scale":Vector2(1, 1),"skew":0.0,"disable_mode":0,"collision_layer":8,"collision_mask":2,"collision_priority":1.0,"input_pickable":true,"monitoring":true,"monitorable":true,"priority":0,"gravity_space_override":0,"gravity_point":false,"gravity_point_unit_distance":0.0,"gravity_point_center":Vector2(0, 1),"gravity_direction":Vector2(0, 1),"gravity":980.0,"linear_damp_space_override":0,"linear_damp":0.1,"angular_damp_space_override":0,"angular_damp":1.0,"audio_bus_override":false,"audio_bus_name":&"Master","script":ExtResource("4_ny388"),"connected_path":null,"connected_index":null,"initial_state":Object(Node,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","script":ExtResource("6_61adu"),"switches":Dictionary[String, Resource("res://scripts/bits/door/door_state.gd")]({
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+doors = Array[ExtResource("4_ny388")]([Object(Area2D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":1,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"position":Vector2(2782, 4222),"rotation":0.0,"scale":Vector2(1, 1),"skew":0.0,"disable_mode":0,"collision_layer":8,"collision_mask":2,"collision_priority":1.0,"input_pickable":true,"monitoring":true,"monitorable":true,"priority":0,"gravity_space_override":0,"gravity_point":false,"gravity_point_unit_distance":0.0,"gravity_point_center":Vector2(0, 1),"gravity_direction":Vector2(0, 1),"gravity":980.0,"linear_damp_space_override":0,"linear_damp":0.1,"angular_damp_space_override":0,"angular_damp":1.0,"audio_bus_override":false,"audio_bus_name":&"Master","script":ExtResource("4_ny388"),"initial_state":Object(Node,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","script":ExtResource("6_61adu"),"switches":Dictionary[StringName, Resource("res://scripts/bits/door/door_state.gd")]({
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }),"isolated":false)
 ,"isolated":true)
-, Object(Area2D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":1,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"position":Vector2(8813, 4481),"rotation":0.0,"scale":Vector2(1, 1),"skew":0.0,"disable_mode":0,"collision_layer":8,"collision_mask":2,"collision_priority":1.0,"input_pickable":true,"monitoring":true,"monitorable":true,"priority":0,"gravity_space_override":0,"gravity_point":false,"gravity_point_unit_distance":0.0,"gravity_point_center":Vector2(0, 1),"gravity_direction":Vector2(0, 1),"gravity":980.0,"linear_damp_space_override":0,"linear_damp":0.1,"angular_damp_space_override":0,"angular_damp":1.0,"audio_bus_override":false,"audio_bus_name":&"Master","script":ExtResource("4_ny388"),"connected_path":null,"connected_index":null,"initial_state":Object(Node,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","script":ExtResource("6_61adu"),"switches":Dictionary[String, Resource("res://scripts/bits/door/door_state.gd")]({
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+, Object(Area2D,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":1,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","visible":true,"modulate":Color(1, 1, 1, 1),"self_modulate":Color(1, 1, 1, 1),"show_behind_parent":false,"top_level":false,"light_mask":1,"visibility_layer":1,"z_index":0,"z_as_relative":true,"y_sort_enabled":false,"texture_filter":0,"texture_repeat":0,"material":null,"use_parent_material":false,"position":Vector2(8813, 4481),"rotation":0.0,"scale":Vector2(1, 1),"skew":0.0,"disable_mode":0,"collision_layer":8,"collision_mask":2,"collision_priority":1.0,"input_pickable":true,"monitoring":true,"monitorable":true,"priority":0,"gravity_space_override":0,"gravity_point":false,"gravity_point_unit_distance":0.0,"gravity_point_center":Vector2(0, 1),"gravity_direction":Vector2(0, 1),"gravity":980.0,"linear_damp_space_override":0,"linear_damp":0.1,"angular_damp_space_override":0,"angular_damp":1.0,"audio_bus_override":false,"audio_bus_name":&"Master","script":ExtResource("4_ny388"),"initial_state":Object(Node,"_import_path":NodePath(""),"unique_name_in_owner":false,"process_mode":0,"process_priority":0,"process_physics_priority":0,"process_thread_group":0,"physics_interpolation_mode":0,"auto_translate_mode":0,"editor_description":"","script":ExtResource("6_61adu"),"switches":Dictionary[StringName, Resource("res://scripts/bits/door/door_state.gd")]({
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }),"isolated":false)
 ,"isolated":true)
 ])
 
-[node name="DoorBit" type="Area2D" parent="." node_paths=PackedStringArray("initial_state") instance=ExtResource("3_fhqhp")]
+[node name="DoorBit" type="Area2D" parent="." node_paths=PackedStringArray("initial_state")]
 process_mode = 1
-position = Vector2(2782, 4222)
+position = Vector2(2720, 4134)
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("4_ny388")
-connected_path = null
-connected_index = null
 initial_state = NodePath("OpenDoorState")
 isolated = true
 
 [node name="ClosedDoorStatt" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("5_myw7h")
 switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }
 
 [node name="OpenDoorState" type="Node" parent="DoorBit" node_paths=PackedStringArray("switches")]
 script = ExtResource("6_61adu")
 switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit"]
@@ -234,37 +243,41 @@ shape = SubResource("RectangleShape2D_83dcw")
 [node name="Sprite2D" type="Sprite2D" parent="DoorBit"]
 texture = SubResource("GradientTexture2D_la1wf")
 
-[node name="DoorBit2" type="Area2D" parent="." node_paths=PackedStringArray("initial_state") instance=ExtResource("3_fhqhp")]
+[node name="DoorBit2" type="Area2D" parent="." node_paths=PackedStringArray("initial_state")]
 process_mode = 1
-position = Vector2(8813, 4481)
+position = Vector2(8543, 4433)
 collision_layer = 8
 collision_mask = 2
 script = ExtResource("4_ny388")
-connected_path = null
-connected_index = null
 initial_state = NodePath("OpenDoorState")
 isolated = true
 
 [node name="ClosedDoorStatt" type="Node" parent="DoorBit2" node_paths=PackedStringArray("switches")]
 script = ExtResource("5_myw7h")
 switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }
 
 [node name="OpenDoorState" type="Node" parent="DoorBit2" node_paths=PackedStringArray("switches")]
 script = ExtResource("6_61adu")
 switches = {
-"entered_range_left": null,
-"entered_range_right": null,
-"exited_range_left": null,
-"exited_range_right": null,
-"interact_left": null,
-"interact_right": null
+&"entered_range": null,
+&"entered_range_left": null,
+&"entered_range_right": null,
+&"exited_range": null,
+&"exited_range_left": null,
+&"exited_range_right": null,
+&"interact": null,
+&"interact_left": null,
+&"interact_right": null
 }
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="DoorBit2"]
