@@ -5,12 +5,12 @@ class_name DoorBit extends Bit
 func get_connected_path() -> StringName:
 	var parent = get_parent()
 	if parent is RoomBit: if parent.config: 
-		return parent.config.get_value("world", "door_connections")[parent.doors.find(self)]["connected_path"]
+		return parent.config.get_value("world", "door_connections")[parent.get_doors().find(self)]["connected_path"]
 	return &""
 func get_connected_index():
 	var parent = get_parent()
 	if parent is RoomBit: if parent.config: 
-		return parent.config.get_value("world", "door_connections")[parent.doors.find(self)]["connected_index"]
+		return parent.config.get_value("world", "door_connections")[parent.get_doors().find(self)]["connected_index"]
 	return 0
 
 ## Everything relating to the current state of the door.
@@ -97,9 +97,10 @@ func pass_through() -> void:
 	print("ADD TO TREE")
 	get_tree().get_first_node_in_group("RoomParent").add_child(new)
 	
-	#var connected_door:DoorBit = new.doors[get_connected_index()]
-	#connected_door.lazy_transform()
-	#print("door: ", connected_door, " t1 ", connected_door.door_position, " t2 ", connected_door.get_area().position)
+	var connected_door := new.get_doors()[get_index()]
+	print("door: ", connected_door, " t1 ", new.doors[get_index()])
+	
+	new.global_position = self.global_position - new.doors[get_index()]
 	
 	#while true:
 		#await connected_door.ready

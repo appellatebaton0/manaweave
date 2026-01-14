@@ -6,7 +6,7 @@ var dock
 func _enter_tree() -> void:
 	# Initialization of the plugin goes here.
 	dock = preload("level_editor.tscn").instantiate()
-	print(dock, self)
+	print(dock.plugin, self)
 	dock.plugin = self
 	
 	add_control_to_dock(EditorPlugin.DOCK_SLOT_RIGHT_UL, dock)

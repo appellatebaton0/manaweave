@@ -1,7 +1,7 @@
 @tool
 extends Panel
 
-var plugin:EditorPlugin
+@export_storage var plugin:EditorPlugin
 
 var current_room:RoomBit
 
@@ -105,7 +105,7 @@ func add_door_entry(door:DoorBit):
 func get_current_room_doors() -> Array[Vector2]:
 	var response:Array[Vector2]
 	
-	for child in current_room.get_children(): if child is DoorBit: response.append(child.area.position)
+	for child in current_room.get_children(): if child is DoorBit: response.append(child.position)
 	
 	return response
 
