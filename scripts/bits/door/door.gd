@@ -32,8 +32,6 @@ func get_area() -> Area2D:
 	var me = self
 	return me
 
-func _init() -> void: print("CREATED DOOR ", self, " PARENT? ", get_parent())
-
 func _ready() -> void:
 	# Set up the current state.
 	if initial_state: change_state(initial_state) # Initial state if it exists.
@@ -42,8 +40,6 @@ func _ready() -> void:
 	# Connect the body signals.
 	area.body_entered.connect(_on_body_entered)
 	area.body_exited.connect(_on_body_exited)
-	
-	print(self , "RDW", area.global_position)
 
 ## Call appropriate active functions for process & physics_process.
 func _process(delta: float) -> void:
@@ -91,30 +87,13 @@ func change_state(to:DoorStateBit):
 ## Switch rooms to this door's room.
 func pass_through() -> void:
 	# Make the new room.
-	print("MADE NEW ROOM")
 	var new:RoomBit = load(get_connected_path()).instantiate()
 	
-	print("ADD TO TREE")
+	# Add it to the tree.
 	get_tree().get_first_node_in_group("RoomParent").add_child(new)
 	
-	var connected_door := new.get_doors()[get_index()]
-	print("door: ", connected_door, " t1 ", new.doors[get_index()])
-	
+	# Transform it so the doors line up.
 	new.global_position = self.global_position - new.doors[get_index()]
 	
-	#while true:
-		#await connected_door.ready
-		#
-		#print("minus ", connected_door.area.global_position)
-		#
-		#new.global_position = self.global_position - connected_door.area.global_position
-		#
+	# Delete this room. NOTE: Should make a lazier unloader / loader? at some point.
 	get_parent().queue_free()
-		#break
-	
-	pass
-func lazy_transform() -> void:
-	
-	print(self, " LT: ", self.global_position)
-	if is_node_ready(): print("LT! ", area.global_position)
-	pass

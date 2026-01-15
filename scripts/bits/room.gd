@@ -10,11 +10,8 @@ const ROOM_SAVE_PATH := "res://scenes/rooms/"
 # Saves to the file.
 @export_storage var doors:Array[Vector2] 
 
-func _init() -> void: print("INIT W/ ", doors)
-
 var config:ConfigFile
 func _ready() -> void:
-	print("READY W/ ", doors)
 	if not Engine.is_editor_hint():
 		config = ConfigFile.new()
 		if config.load(config_path): push_warning("Failed to load the config file at path ", config_path)

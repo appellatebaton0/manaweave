@@ -22,9 +22,7 @@ class Room:
 		filename = _config.get_value("world", "room_filename")
 	
 	## Create a RoomBit instance from this room.
-	func create() -> RoomBit: 
-		print(0)
-		return load(filename).instantiate()
+	func create() -> RoomBit: return load(filename).instantiate()
 	
 	## Create the doors and hook them up to the other rooms based on the config.
 	func load_doors(from:Dictionary[Room, StringName]):
@@ -54,8 +52,6 @@ class Room:
 		## Create a new door with a config entry and a dict of all the rooms.
 		func _init(belongs_to:Room, from:Dictionary, with:Dictionary[Room, StringName]):
 			owned_by = belongs_to # Transfer over the creator.
-			
-			print("new_door", from)
 			
 			connected_to = with.find_key(from["connected_path"]) # Turn the path into the room.
 			connected_index = from["connected_index"] if from["connected_index"] else -1 # Convert the index.
@@ -111,14 +107,14 @@ func _ready() -> void:
 	get_tree().get_first_node_in_group("RoomParent").add_child(new)
 	
 	# DEBUG.
-	for room in rooms:
-		print("- - -")
-		print("Room ", room.filename)
-		print("-")
-		for door in room.doors:
-			print("Door ", door)
-			print("Connection: ", door.connected_to.filename)
-			print("-")
+	#for room in rooms:
+		#print("- - -")
+		#print("Room ", room.filename)
+		#print("-")
+		#for door in room.doors:
+			#print("Door ", door)
+			#print("Connection: ", door.connected_to.filename)
+			#print("-")
 
 ## Load all the room configs into Rooms.
 func load_rooms() -> Array[Room]:
