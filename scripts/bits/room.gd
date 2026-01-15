@@ -18,7 +18,7 @@ func _ready() -> void:
 		
 
 # Updates the config for this room to reflect its state.
-func save_config() -> Error:
+func save_config(with_debug := false) -> Error:
 	var cfg = ConfigFile.new()
 	
 	# Make the config path if it doesn't already exist.
@@ -38,7 +38,7 @@ func save_config() -> Error:
 	cfg.set_value("world", "door_connections", door_connections)
 	
 	# Level Editor message
-	if Engine.is_editor_hint(): 
+	if with_debug:
 		print("[Room Config Updater]: Saved ", len(door_connections), " Door Connections")
 	
 	# Save all the info from the children. NOTE: Only when not an editor update.

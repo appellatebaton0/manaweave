@@ -1,12 +1,9 @@
 @tool
 extends PanelContainer
 
-var undo_redo:EditorUndoRedoManager
-var door:DoorBit
+signal delete(node:Node)
 
+var door:DoorBit
 @onready var label := $MarginContainer/HBoxContainer/Label
 
-func _ready() -> void:
-	if door == null: return
-	
-	label.text = door.name
+func _on_button_pressed() -> void: delete.emit(self)

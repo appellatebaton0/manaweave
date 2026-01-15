@@ -53,11 +53,12 @@ func _enter_tree() -> void:
 	update_controls()
 	
 	# Load in the selection and wire it up.
-	selection = get_editor_interface().get_selection()
+	selection = EditorInterface.get_selection()
 	selection.selection_changed.connect(_on_selection_change)
+	_on_selection_change()
 	
 	# Connect all the buttons to their respective functions.
-	updater.pressed.connect(_update_room_data)
+	updater.pressed.connect(_update_room_data.bind(true))
 	door_adder.pressed.connect(_on_door_adder_pressed)
 	door_checker.pressed.connect(_on_check_door_count)
 	
@@ -71,12 +72,14 @@ func _exit_tree() -> void:
 	dock.free()
 
 func _on_selection_change() -> void:
+	
 	# Update the current room.
 	var changed := false
 	for node in selection.get_selected_nodes(): 
 		if node.owner is RoomBit: node = node.owner
 		
 		if node is RoomBit:
+			_update_room_data()
 			current_room = node
 			changed = true
 			break
@@ -116,37 +119,35 @@ func _on_door_adder_pressed() -> void:
 	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
 	undo_redo.create_action("Add New Door")
 	
+	# Doing the door addition.
 	undo_redo.add_do_method(current_room, "add_child", new)
 	undo_redo.add_do_method(self, "localize", new)
-	undo_redo.add_do_method(self, "add_door_entry", new)
 	undo_redo.add_do_property(new, "name", "DoorBit")
 	undo_redo.add_do_method(self, "_update_room_data")
 	undo_redo.add_do_method(self, "_update_interface")
 	
-	#undo_redo.add_undo_method(self, "print", "!!!")
+	# Undoing the door addition
 	undo_redo.add_undo_method(current_room, "remove_child", new) #...Leaves the door existent for redos...
 	undo_redo.add_undo_method(self, "_update_room_data")
 	undo_redo.add_undo_method(self, "_update_interface")
 	
 	undo_redo.commit_action()
-	
-	
 
 ## Updates the data of the room to be correct
-func _update_room_data() -> void:
+func _update_room_data(with_debug := false) -> void:
 	if current_room == null: return
-	print("[Level Editor]: Saving...")
+	if with_debug: print("[Level Editor]: Saving...")
 	
 	# Update the doors.
 	#unre_action("Update Room Doors", current_room, "doors", get_current_room_doors(), current_room.doors)
 	current_room.doors = get_current_room_doors()
 	
 	# Update the cfg file.
-	var save_error = current_room.save_config()
+	var save_error = current_room.save_config(with_debug)
 	
 	if save_error:
 		push_error("[Level Editor]: Failed Config Save. Error Code: ", save_error)
-	else:
+	elif with_debug:
 		print("[Level Editor]: Room Config Saved to ", current_room.config_path)
 
 ## Turn a scene node into its local version. Similar to the "Make Local" button in the editor.
@@ -159,14 +160,36 @@ func localize(node:Node):
 ## Adds a door entry to the container.
 func add_door_entry(door:DoorBit):
 	var new_entry = entry_scene.instantiate()
-	new_entry.undo_redo = get_undo_redo()
-	new_entry.door = door
+	new_entry.delete.connect(_delete_door)
 		
 	entry_box.add_child(new_entry)
 	
 	new_entry.door = door
+	new_entry.label.text = door.name
 	
 	door_entries.append(new_entry)
+
+func _delete_door(entry:Node):
+	
+	var undo_redo := get_undo_redo()
+	var door:DoorBit = entry.door
+	
+	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
+	undo_redo.create_action("Delete Door")
+	
+	# Doing the door deletion.
+	undo_redo.add_do_method(current_room, "remove_child", door) #...Leaves the door existent for undos...
+	undo_redo.add_do_method(self, "_update_room_data")
+	undo_redo.add_do_method(self, "_update_interface")
+	
+	# Undoing the door deletion.
+	undo_redo.add_undo_method(current_room, "add_child", door) 
+	undo_redo.add_undo_property(door, "position", door.position)
+	undo_redo.add_undo_property(door, "owner", current_room)
+	undo_redo.add_undo_method(self, "_update_room_data")
+	undo_redo.add_undo_method(self, "_update_interface")
+	
+	undo_redo.commit_action()
 
 func get_current_room_doors() -> Array[Vector2]:
 	var response:Array[Vector2]

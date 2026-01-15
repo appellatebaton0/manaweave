@@ -1,4 +1,4 @@
-[gd_scene load_steps=4 format=3 uid="uid://cnxswkkw856w2"]
+[gd_scene load_steps=8 format=3 uid="uid://cnxswkkw856w2"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_owc6j"]
 bg_color = Color(0, 0, 0, 0.3254902)
@@ -8,6 +8,34 @@ bg_color = Color(0.41981313, 0.41981313, 0.4198131, 0.3254902)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_xp5vb"]
 bg_color = Color(0.099985994, 0.099985994, 0.099985994, 0.3254902)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_idmif"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.32941177)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_62klp"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.52156866)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_w002a"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0, 0, 0, 0.68235296)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_tbd0j"]
+content_margin_left = 4.0
+content_margin_top = 4.0
+content_margin_right = 4.0
+content_margin_bottom = 4.0
+bg_color = Color(0.12773594, 0.12773594, 0.12773594, 0.45882353)
 
 [node name="LevelEditor" type="Panel"]
 anchors_preset = 15
@@ -75,24 +103,38 @@ text = "Update Data"
 layout_mode = 2
 theme_override_constants/separation = 8
 
-[node name="Entries" type="VBoxContainer" parent="ScrollContainer/VBoxContainer"]
+[node name="ScrollContainer" type="ScrollContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
+size_flags_vertical = 3
+
+[node name="Entries" type="VBoxContainer" parent="ScrollContainer/VBoxContainer/ScrollContainer"]
+layout_mode = 2
+size_flags_horizontal = 3
 size_flags_vertical = 3
 
 [node name="MarginContainer2" type="MarginContainer" parent="ScrollContainer/VBoxContainer"]
 layout_mode = 2
-theme_override_constants/margin_left = 3
-theme_override_constants/margin_top = 3
-theme_override_constants/margin_right = 3
-theme_override_constants/margin_bottom = 3
+theme_override_constants/margin_left = 5
+theme_override_constants/margin_top = 5
+theme_override_constants/margin_right = 5
+theme_override_constants/margin_bottom = 5
 
-[node name="HBoxContainer2" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/MarginContainer2"]
+[node name="PanelContainer" type="PanelContainer" parent="ScrollContainer/VBoxContainer/MarginContainer2"]
+layout_mode = 2
+theme_override_styles/panel = SubResource("StyleBoxFlat_idmif")
+
+[node name="HBoxContainer2" type="HBoxContainer" parent="ScrollContainer/VBoxContainer/MarginContainer2/PanelContainer"]
 layout_mode = 2
 
-[node name="DoorCounter" type="Label" parent="ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2"]
+[node name="DoorCounter" type="Label" parent="ScrollContainer/VBoxContainer/MarginContainer2/PanelContainer/HBoxContainer2"]
 layout_mode = 2
-text = "Check Global Doors: 0000 - ✓"
+size_flags_horizontal = 6
+text = "Check Global Doors: 0000 ✓"
 
-[node name="DoorChecker" type="Button" parent="ScrollContainer/VBoxContainer/MarginContainer2/HBoxContainer2"]
+[node name="DoorChecker" type="Button" parent="ScrollContainer/VBoxContainer/MarginContainer2/PanelContainer/HBoxContainer2"]
 layout_mode = 2
+size_flags_horizontal = 8
+theme_override_styles/normal = SubResource("StyleBoxFlat_62klp")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_w002a")
+theme_override_styles/hover = SubResource("StyleBoxFlat_tbd0j")
 text = "Check"

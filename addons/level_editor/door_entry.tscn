@@ -1,8 +1,23 @@
-[gd_scene load_steps=3 format=3 uid="uid://b7kit5frgwpga"]
+[gd_scene load_steps=6 format=3 uid="uid://b7kit5frgwpga"]
 
 [ext_resource type="Script" uid="uid://csdvbnvmgntrv" path="res://addons/level_editor/door_entry.gd" id="1_sujsy"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_sujsy"]
+bg_color = Color(0, 0, 0, 0.52156866)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_04qwc"]
+content_margin_left = 7.0
+content_margin_right = 7.0
+bg_color = Color(0, 0, 0, 0.52156866)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhl5i"]
+content_margin_left = 7.0
+content_margin_right = 7.0
+bg_color = Color(0, 0, 0, 0.52156866)
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_dhog5"]
+content_margin_left = 7.0
+content_margin_right = 7.0
 bg_color = Color(0, 0, 0, 0.52156866)
 
 [node name="DoorEntry" type="PanelContainer"]
@@ -30,3 +45,12 @@ size_flags_vertical = 1
 text = "Door"
 vertical_alignment = 1
 autowrap_mode = 1
+
+[node name="Button" type="Button" parent="MarginContainer/HBoxContainer"]
+layout_mode = 2
+theme_override_styles/normal = SubResource("StyleBoxFlat_04qwc")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_dhl5i")
+theme_override_styles/hover = SubResource("StyleBoxFlat_dhog5")
+text = "X"
+
+[connection signal="pressed" from="MarginContainer/HBoxContainer/Button" to="." method="_on_button_pressed"]
