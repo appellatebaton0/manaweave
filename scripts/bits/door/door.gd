@@ -93,7 +93,7 @@ func pass_through() -> void:
 	get_tree().get_first_node_in_group("RoomParent").add_child(new)
 	
 	# Transform it so the doors line up.
-	new.global_position = self.global_position - new.doors[get_index()]
+	new.global_position = self.global_position - new.doors[get_connected_index()]
 	
 	# Delete this room. NOTE: Should make a lazier unloader / loader? at some point.
 	get_parent().queue_free()

@@ -185,11 +185,17 @@ func _delete_door(entry:Node):
 	# Undoing the door deletion.
 	undo_redo.add_undo_method(current_room, "add_child", door) 
 	undo_redo.add_undo_property(door, "position", door.position)
-	undo_redo.add_undo_property(door, "owner", current_room)
+	undo_redo.add_undo_method(self, "fix_owner", door, current_room)
 	undo_redo.add_undo_method(self, "_update_room_data")
 	undo_redo.add_undo_method(self, "_update_interface")
 	
 	undo_redo.commit_action()
+
+## Sets the owner of a node and all its children to to.
+func fix_owner(of:Node, to:Node):
+	of.owner = to
+	for child in of.get_children():
+		fix_owner(child, to)
 
 func get_current_room_doors() -> Array[Vector2]:
 	var response:Array[Vector2]
