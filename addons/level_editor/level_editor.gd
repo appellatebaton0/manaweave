@@ -74,12 +74,10 @@ func _on_selection_change() -> void:
 	# Update the current room.
 	var changed := false
 	for node in selection.get_selected_nodes(): 
+		if node.owner is RoomBit: node = node.owner
+		
 		if node is RoomBit:
 			current_room = node
-			changed = true
-			break
-		elif node.owner is RoomBit:
-			current_room = node.owner
 			changed = true
 			break
 	
@@ -111,19 +109,28 @@ func _on_door_adder_pressed() -> void:
 	
 	# Add the door to the current_room.
 	
+	var undo_redo := get_undo_redo()
+	
 	var new = door_scene.instantiate()
 	
-	current_room.add_child(new)
+	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
+	undo_redo.create_action("Add New Door")
 	
-	new.name = "DoorBit"
+	undo_redo.add_do_method(current_room, "add_child", new)
+	undo_redo.add_do_method(self, "localize", new)
+	undo_redo.add_do_method(self, "add_door_entry", new)
+	undo_redo.add_do_property(new, "name", "DoorBit")
+	undo_redo.add_do_method(self, "_update_room_data")
+	undo_redo.add_do_method(self, "_update_interface")
 	
-	localize(new)
-	#get_editor_interface().edit_node(new)
+	#undo_redo.add_undo_method(self, "print", "!!!")
+	undo_redo.add_undo_method(current_room, "remove_child", new) #...Leaves the door existent for redos...
+	undo_redo.add_undo_method(self, "_update_room_data")
+	undo_redo.add_undo_method(self, "_update_interface")
 	
-	# Add a door_entry to the pane.
-	add_door_entry(new)
+	undo_redo.commit_action()
 	
-	_update_room_data()
+	
 
 ## Updates the data of the room to be correct
 func _update_room_data() -> void:
@@ -131,7 +138,8 @@ func _update_room_data() -> void:
 	print("[Level Editor]: Saving...")
 	
 	# Update the doors.
-	unre_action("Update Room Doors", current_room, "doors", get_current_room_doors(), current_room.doors)
+	#unre_action("Update Room Doors", current_room, "doors", get_current_room_doors(), current_room.doors)
+	current_room.doors = get_current_room_doors()
 	
 	# Update the cfg file.
 	var save_error = current_room.save_config()
@@ -222,21 +230,3 @@ func get_places(num):
 		places += 1;
 
 	return places
-
-## Perform a change via the EditorUndoRedoManager
-func unre_action(action_name:String, target:Object, property:StringName, new_value:Variant, old_value:Variant):
-	var undo_redo := get_undo_redo()
-	
-	# Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
-	undo_redo.create_action(action_name)
-	undo_redo.add_do_property(target, property, new_value)
-	undo_redo.add_undo_property(target, property, old_value)
-	undo_redo.commit_action()
-#
-#func unre_method(action_name:String, target:Object, method:StringName, ...args:Array):
-	#var undo_redo := get_undo_redo()
-	#
-	## Use the global UndoRedo manager, EditorUndoRedoManager, to make it notice the change.
-	#undo_redo.create_action(action_name)
-	#undo_redo.add_do_method(target, method, args)
-	#undo_redo.commit_action()
