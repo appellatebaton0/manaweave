@@ -7,7 +7,7 @@ extends EditorPlugin
 var Utils = preload("res://addons/godot_super-wakatime/utils.gd").new()
 var DecompressorUtils = preload("res://addons/godot_super-wakatime/decompressor.gd").new()
 
-# Hearbeat class
+# Heartbeat class
 const HeartBeat = preload("res://addons/godot_super-wakatime/heartbeat.gd")
 var last_heartbeat = HeartBeat.new()
 
@@ -45,7 +45,7 @@ const LOG_INTERVAL: int = 60000
 var scene_mode: bool = false
 
 var key_get_tries: int = 0
-var counter_instance: Node
+var counter_instance: WakatimeCounter
 var current_time: String = "0 hrs, 0mins"
 
 
@@ -53,12 +53,12 @@ var current_time: String = "0 hrs, 0mins"
 func _ready() -> void:
 	setup_plugin()
 	set_process(true)
-	
+
 func _exit_tree() -> void:
 	_disable_plugin()
 	set_process(false)
-	
-	
+
+
 func _physics_process(delta: float) -> void:
 	"""Process plugin changes over time"""
 	# Every 1000 frames check for updates
@@ -87,7 +87,7 @@ func _physics_process(delta: float) -> void:
 						previous_state = state
 		else:
 			last_scene_path = '' 
-					
+
 func generate_scene_state(node: Node) -> String:
 	"""Generate a scene state identifier"""
 	var state = str(node.get_instance_id())
@@ -123,8 +123,16 @@ func setup_plugin() -> void:
 	add_tool_menu_item(API_MENU_ITEM, request_api_key)
 	add_tool_menu_item(CONFIG_MENU_ITEM, open_config)
 	
+	var shortcut := Shortcut.new()
+	var key_event = InputEventKey.new()
+	key_event.keycode = KEY_W
+	key_event.alt_pressed = true
+	shortcut.events = [key_event]
+	
 	counter_instance = Counter.instantiate()
-	add_control_to_bottom_panel(counter_instance, current_time)
+	counter_instance.api_key = api_key
+	add_control_to_bottom_panel(counter_instance, current_time, shortcut)
+	
 	
 	# Connect code editor signals
 	var script_editor: ScriptEditor = get_editor_interface().get_script_editor()
@@ -323,27 +331,71 @@ func enough_time_passed():
 	
 func update_today_time(wakatime_cli) -> void:
 	"""Update today's time in menu"""
-	var output: Array[Variant] = []
-	# Get today's time from Wakatime CLI
-	var exit_code: int = OS.execute(wakatime_cli, ["--today"], output, true)
+	var output = []
+	# Get today's time from Hackatime
+	var exit_code: int = OS.execute("curl", ["-H", "Authorization: Bearer " + get_api_key(), "https://hackatime.hackclub.com/api/v1/users/my/stats?start_date=2026-01-04T03:00:00Z&features=projects&limit=100"], output)
+	
+	output = JSON.parse_string(output[0]) # Parse it into a dictionary
 	
 	# Convert it and combine different categories into
 	if exit_code == 0:
-		current_time = convert_time(output[0])
+		current_time = convert_time(find_project_time(output["data"]["projects"]))
 	else:
 		current_time = "Wakatime"
-	#print(current_time)
-	call_deferred("_update_panel_label", current_time, output[0])
 	
+	# print("upd time to: " + current_time)
+	# print("real: ", output)
+	var resp = []
+	OS.execute(wakatime_cli, ["--help"], resp, true)
+	# print("log: ", resp[0])
+	call_deferred("_update_panel_label", current_time, current_time)
+
+func find_project_time(from) -> String:
+	# Find the time for the current project from a list of all projects.
+	
+	for project in from:
+		if project["name"] == ProjectSettings.get_setting("application/config/name"):
+			return project["text"]
+	
+	return "Project Unknown"
+
 func _update_panel_label(label: String, content: String):
 	"""Update bottom panel name that shows time"""
 	# If counter exists and it has a label, update both the label and panel's name
-	if counter_instance and counter_instance.get_node("HBoxContainer/Label"):
-		counter_instance.get_node("HBoxContainer/Label").text = content
+	if counter_instance and not get_bottom_dock_visible().has(counter_instance):
+		## counter_instance.get_node("HBoxContainer/Label").text = content
+		
+		# Make the shortcut.
+		var shortcut := Shortcut.new()
+		var key_event = InputEventKey.new()
+		key_event.keycode = KEY_W
+		key_event.alt_pressed = true
+		shortcut.events = [key_event]
+		
 		# Workaround to rename panel
 		remove_control_from_bottom_panel(counter_instance)
-		add_control_to_bottom_panel(counter_instance, label)
+		add_control_to_bottom_panel(counter_instance, label, shortcut)
+
+func get_bottom_dock_visible() -> Array[Node]:
+	var response:Array[Node]
+	
+	var waiting:Array[Node] = get_editor_interface().get_base_control().get_children()
+	while not waiting.is_empty():
+		# Find the bottom panel dock.
+		if waiting[0].name.contains("BottomPanel"):
+			var waiting2:Array[Node] = waiting[0].get_child(0).get_children()
+			while not waiting2.is_empty():
+				# Find all the visible docks within the bottom dock.
+				if waiting2[0].visible:
+					response.append(waiting2[0])
+				
+				waiting2.pop_front()
+			break
 		
+		waiting.append_array(waiting.pop_front().get_children())
+	return response
+	
+
 func convert_time(complex_time: String):
 	"""Convert time from complex format into basic one, combine times"""
 	return complex_time
