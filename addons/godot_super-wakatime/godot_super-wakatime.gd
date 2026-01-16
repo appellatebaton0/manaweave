@@ -331,10 +331,11 @@ func enough_time_passed():
 	
 func update_today_time(wakatime_cli) -> void:
 	"""Update today's time in menu"""
+	
 	var output = []
 	# Get today's time from Hackatime
-	var exit_code: int = OS.execute("curl", ["-H", "Authorization: Bearer " + get_api_key(), "https://hackatime.hackclub.com/api/v1/users/my/stats?start_date=2026-01-04T03:00:00Z&features=projects&limit=100"], output)
-	
+	var exit_code: int = OS.execute("curl", ["-H", "Authorization: Bearer " + get_api_key(), "https://hackatime.hackclub.com/api/v1/users/my/stats?start_date="+Time.get_date_string_from_system()+"T06:00:00Z&features=projects&limit=100"], output)
+
 	output = JSON.parse_string(output[0]) # Parse it into a dictionary
 	
 	# Convert it and combine different categories into

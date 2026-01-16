@@ -48,7 +48,6 @@ func _enter_tree() -> void:
 	
 	# Add the control to the bottom docks.
 	dock = preload("level_editor.tscn").instantiate()
-	#dock.plugin = self
 	
 	update_controls()
 	
